@@ -48,7 +48,7 @@ class Hungarian_Algorithm:
         self.house = house
 
     def distance(self, centre_iterator: int, house_iterator: int):
-        """[Function which calculate distance from distribution centre to house.]
+        """[Function which calculates distance from distribution centre to house.]
 
         Args:
             centre_iterator (int): [Distribution centre number.]
@@ -75,7 +75,7 @@ class Hungarian_Algorithm:
         """[Function which makes vector of potentials of every distribution centre and house.]
 
         Returns:
-            [list[float]]: [Vector of potentials - first potienals of every distribution centre then every house.]
+            [list[float]]: [Vector of potentials - first potentials of every distribution centre then every house.]
         """
         A = self.calculate_adjency_matrix()
         NoOfHouses = int(sum(self.capacity))
@@ -91,6 +91,11 @@ class Hungarian_Algorithm:
         return Y
     
     def generate_bipartite_graph(self):
+         """[Function generates bipartite graph which first part are centres, second houses and save it as matrix of edge weights.]
+
+        Returns:
+            [matrix[float]]: [Matrix of distances between centres and houses.]
+        """
         NoOfHouses = int(len(self.house))
         NoOfCentres = int(len(self.centre))
         G = np.zeros((NoOfCentres + NoOfHouses, NoOfCentres + NoOfHouses)) # najpierw centra, potem domy
@@ -101,6 +106,11 @@ class Hungarian_Algorithm:
         return G
     
     def update_R(self, R, M, IsCentre: bool):
+         """[Function deletes from list R nodes which already are in perfect matching M.]
+
+        Returns:
+            [list]: [Updated list R.]
+        """
         # copy()
         if IsCentre:
             i = 0
@@ -114,6 +124,11 @@ class Hungarian_Algorithm:
         return R
     
     def reverse_path(self, G_y, R_C, R_H):
+         """[Function creates bipartite, oriented subgraph which contains all tight edges.]
+
+        Returns:
+            [matrix]: [Oriented subrgraph which contains all tight edges.]
+        """
         # copy()
         NoOfCentres = int(len(self.centre))        
         path = BFS(G_y,R_C,R_H) # parzyste to centra
@@ -125,22 +140,47 @@ class Hungarian_Algorithm:
         return G_y
 
     def update_M(self, M, G_y):
+         """[summary]
+
+        Returns:
+            [type]: [description]
+        """
         # TODO
         return M
     
     def update_Z(self, Z, G_y, R_C, R_H):
+         """[summary]
+
+        Returns:
+            [type]: [description]
+        """
         # TODO
         return Z
     
     def update_Gy(self, G_y, G, y):
+         """[summary]
+
+        Returns:
+            [type]: [description]
+        """
         # TODO
         return G_y    
     
     def calculate_delta(self, delta, Z, y):
+         """[summary]
+
+        Returns:
+            [type]: [description]
+        """
         # TODO
         return delta
         
     def main_algorithm(self):
+         """[Main Hungarian algorithm]
+
+        Returns:
+            [list]: [Perfect matching in graph containing distribution centres and houses.]
+        """
         M = []
         G = self.generate_bipartite_graph()
         NoOfHouses = int(len(self.house))
@@ -179,18 +219,38 @@ class Hungarian_Algorithm:
                 
                 
 def intersection(list1, list2):
+     """[Function makes intersection of two any lists. I returns elements from first list list which are on second list, too.]
+
+        Returns:
+            [list]: [Intersection of two lists.]
+        """
     return [value for value in list1 if (value in list2)]
 
 def subtraction(list1, list2):
+     """[Function makes substraction of two any lists. It returns elements from first list which are not on second list.]
+
+        Returns:
+            [list]: [Substraction of two lists.]
+        """
     return[value for value in list1 if (value not in list2)]
 
 def delete_element_from_list(L, x):
+     """[Function deletes particular element from list.]
+
+        Returns:
+            [list]: [List without particular element.]
+        """
     for i in range(len(L)):
         if L[i] == x:
             return L[:i] + L[i + 1:]
     return L
 
 def BFS(G, A, B):
+     """[summary]
+
+        Returns:
+            [type]: [description]
+        """
     '''A,B podzbiory wierzcholkow G
     zwraca sciezke z wierzcholka z A  do wierzcholka z B o ile taka istnieje''' 
     # TODO
