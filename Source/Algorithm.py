@@ -11,41 +11,39 @@ class Hungarian_Algorithm:
             capacity ([list[int]]): [Capacity of every distribution center. For example: [1,1,2] ]
             house ([list[list[int]]]): [Coordinates of all houses. For example: [[-1,2], [3,1], [-4,2], [-1,-2]] ]
         """
-        # TODO Sprawdzenie poprawności danych wejściowych
+        self.check_init_data(centre, capacity, house)
+        
         self.centre = centre # postaci: [[0,1], [-3,2], [-1,5]]
         self.capacity = capacity # postaci [1,1,2]
         self.house = house # postaci [[-1,2], [3,1], [-4,2], [-1,-2]] 
         
-    def __init__(self, path):
-        """[Function which loads data about centres and houses from file.]
+    def check_init_data(self, centre, capacity, house):
+        """[Function which validates input data.]
 
         Args:
-            path ([string]): [File path where are saved data about some distribution centres and houses.]
+            centre ([list[list[int]]]): [Coordinates of all distribution centres. For example: [[0,1], [-3,2], [-1,5]] ]
+            capacity ([list[int]]): [Capacity of every distribution center. For example: [1,1,2] ]
+            house ([list[list[int]]]): [Coordinates of all houses. For example: [[-1,2], [3,1], [-4,2], [-1,-2]] ]
+
+        Raises:
+            [Exception if data doesn't match the pattern.]
         """
-        temp = []
-        centre = []
-        capacity = []
-        house = []
-        
-        with open(path) as file:
-            lines = file.readlines()
-        for line in lines:
-            temp.append(list(map(float, line
-                .replace('\t', ' ')
-                .replace('\r', '')
-                .replace('\n', '')
-                .split(' '))))
-
-        for j in range(0, len(temp[0]) - 1, 2):
-            centre.append([temp[0][j],temp[0][j+1]])
-        for j in range(len(temp[1])):
-            capacity.append(temp[1][j])
-        for j in range(0, len(temp[2]) - 1, 2):
-            house.append([temp[2][j],temp[2][j+1]])
-
-        self.centre = centre
-        self.capacity = capacity
-        self.house = house
+        text = "Inappropriate type of an object: "
+        if not isinstance(centre, list):
+            raise Exception(text + 'centre')
+        if not isinstance(capacity, list):
+            raise Exception(text + 'capacity')
+        if not isinstance(house, list):
+            raise Exception(text + 'house')
+        for i in range(len(self.centre)):
+            if (not isinstance(centre[i], list)) or (not isinstance(centre[i][0], int)) or (not isinstance(centre[i][1], int)):
+                raise Exception(text + 'centre')
+        for i in range(len(self.capacity)):
+            if (not isinstance(capacity[i], list)) or (not isinstance(capacity[i][0], int)) or (not isinstance(capacity[i][1], int)):
+                raise Exception(text + 'capacity')
+        for i in range(len(self.house)):
+            if (not isinstance(house[i], list)) or (not isinstance(house[i][0], int)) or (not isinstance(house[i][1], int)):
+                raise Exception(text + 'house')
 
     def distance(self, centre_iterator: int, house_iterator: int):
         """[Function which calculates distance from distribution centre to house.]
@@ -91,7 +89,7 @@ class Hungarian_Algorithm:
         return Y
     
     def generate_bipartite_graph(self):
-         """[Function generates bipartite graph which first part are centres, second houses and save it as matrix of edge weights.]
+        """[Function generates bipartite graph which first part are centres, second houses and save it as matrix of edge weights.]
 
         Returns:
             [matrix[float]]: [Matrix of distances between centres and houses.]
@@ -106,7 +104,7 @@ class Hungarian_Algorithm:
         return G
     
     def update_R(self, R, M, IsCentre: bool):
-         """[Function deletes from list R nodes which already are in perfect matching M.]
+        """[Function deletes from list R nodes which already are in perfect matching M.]
 
         Returns:
             [list]: [Updated list R.]
@@ -124,7 +122,7 @@ class Hungarian_Algorithm:
         return R
     
     def reverse_path(self, G_y, R_C, R_H):
-         """[Function creates bipartite, oriented subgraph which contains all tight edges.]
+        """[Function creates bipartite, oriented subgraph which contains all tight edges.]
 
         Returns:
             [matrix]: [Oriented subrgraph which contains all tight edges.]
@@ -140,16 +138,23 @@ class Hungarian_Algorithm:
         return G_y
 
     def update_M(self, M, G_y):
-         """[summary]
+        """[summary]
 
         Returns:
             [type]: [description]
         """
-        # TODO
+        M = []
+        Centre_iterator = list(range(len(self.centre))) # indeksy centrow
+        NoOfHouses = int(len(self.house))
+        NoOfCentres = int(len(self.centre))
+        for i in Centre_iterator:
+            for j in range(NoOfCentres, NoOfCentres + NoOfHouses):
+                if G_y[j][i] > 0:
+                    M.append([i,j])                
         return M
     
     def update_Z(self, Z, G_y, R_C, R_H):
-         """[summary]
+        """[summary]
 
         Returns:
             [type]: [description]
@@ -158,7 +163,7 @@ class Hungarian_Algorithm:
         return Z
     
     def update_Gy(self, G_y, G, y):
-         """[summary]
+        """[summary]
 
         Returns:
             [type]: [description]
@@ -167,7 +172,7 @@ class Hungarian_Algorithm:
         return G_y    
     
     def calculate_delta(self, delta, Z, y):
-         """[summary]
+        """[summary]
 
         Returns:
             [type]: [description]
@@ -176,7 +181,7 @@ class Hungarian_Algorithm:
         return delta
         
     def main_algorithm(self):
-         """[Main Hungarian algorithm]
+        """[Main Hungarian algorithm]
 
         Returns:
             [list]: [Perfect matching in graph containing distribution centres and houses.]
@@ -190,7 +195,7 @@ class Hungarian_Algorithm:
         R_C = list(range(NoOfCentres)) # wierzcholki niepokryte przez M
         R_H = list(range(NoOfHouses)) # wierzcholki niepokryte przez M
         Z = list(range(NoOfHouses))
-        Centre_iterator = list(range(len(self.centre))) # indeksy studni
+        Centre_iterator = list(range(len(self.centre))) # indeksy centrow
         House_iterator = list(range(len(self.house))) # indeksy domow
         
         
@@ -201,7 +206,7 @@ class Hungarian_Algorithm:
             else:
                 delta = self.calculate_delta
                 Z_Intersection_C = intersection(Z, Centre_iterator)
-                Z_Intersection_H = intersection(Z, range(House_iterator))
+                Z_Intersection_H = intersection(Z, House_iterator)
 
                 for i in Z_Intersection_C: # dodawanie odejmowanie delty
                     Y[i] += delta
@@ -210,7 +215,7 @@ class Hungarian_Algorithm:
             
                 G_y = self.update_Gy(G, Y, G_y) # dodaje ciasne i usuwam nieciasne krawedzie z Gy
 
-                M = self.update_M(G_y)
+                M = self.update_M(M, G_y)
                 R_C = self.update_R(R_C, M, True)
                 R_H = self.update_R(R_C, M, False)
                 Z = self.update_Z(Z, G_y, R_C, R_H)
@@ -219,40 +224,68 @@ class Hungarian_Algorithm:
                 
                 
 def intersection(list1, list2):
-     """[Function makes intersection of two any lists. I returns elements from first list list which are on second list, too.]
+    """[Function makes intersection of two any lists. I returns elements from first list list which are on second list, too.]
 
         Returns:
             [list]: [Intersection of two lists.]
-        """
+    """
     return [value for value in list1 if (value in list2)]
 
 def subtraction(list1, list2):
-     """[Function makes substraction of two any lists. It returns elements from first list which are not on second list.]
+    """[Function makes substraction of two any lists. It returns elements from first list which are not on second list.]
 
         Returns:
             [list]: [Substraction of two lists.]
-        """
+    """
     return[value for value in list1 if (value not in list2)]
 
 def delete_element_from_list(L, x):
-     """[Function deletes particular element from list.]
+    """[Function deletes particular element from list.]
 
         Returns:
             [list]: [List without particular element.]
-        """
+    """
     for i in range(len(L)):
         if L[i] == x:
             return L[:i] + L[i + 1:]
     return L
 
 def BFS(G, A, B):
-     """[summary]
+    """[summary]
 
         Returns:
             [type]: [description]
-        """
+    """
     '''A,B podzbiory wierzcholkow G
     zwraca sciezke z wierzcholka z A  do wierzcholka z B o ile taka istnieje''' 
     # TODO
     return []
 
+def load_from_file(path):
+    """[Function which loads data about centres and houses from file.]
+
+    Args:
+        path ([string]): [File path where are saved data about some distribution centres and houses.]
+    """
+    temp = []
+    centre = []
+    capacity = []
+    house = []
+    
+    with open(path) as file:
+        lines = file.readlines()
+    for line in lines:
+        temp.append(list(map(float, line
+            .replace('\t', ' ')
+            .replace('\r', '')
+            .replace('\n', '')
+            .split(' '))))
+
+    for j in range(0, len(temp[0]) - 1, 2):
+        centre.append([temp[0][j],temp[0][j+1]])
+    for j in range(len(temp[1])):
+        capacity.append(temp[1][j])
+    for j in range(0, len(temp[2]) - 1, 2):
+        house.append([temp[2][j],temp[2][j+1]])
+
+    return centre, capacity, house
