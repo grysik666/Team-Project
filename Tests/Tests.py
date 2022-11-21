@@ -49,6 +49,32 @@ class HungarianAlgorithmTestCase(unittest.TestCase):
         expected_value = math.sqrt(4**2 + 3**2)
         msg = 'Wrong result!'
         self.assertEqual(result, expected_value, msg)
+
+    #test za dużo centrów w porównaniu z capacity
+
+    #test centra*pojemność =/= liczba domów
+    
+    #test dwa domy / dwa centra o tych samych współrzędnych
+    
+    #test centrum i dom o tych samych współrzędnych
+
+    #test calculate_adjency_matrix
+
+    #test generate_bipartite_graph
+
+    #test reverse path
+    
+    #test wektor potencjałów
+
+    #test działań na listach
+
+    #test BFS
+
+    #test wszystkich śmiesznych małych funkcji update
+
+    #test delta
+
+    #test całości
         
     
 if __name__ == '__main__':
