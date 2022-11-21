@@ -1,5 +1,6 @@
 import unittest
-from ..Source.Algorithm import *
+from Source import Algorithm
+import math
 
 class HungarianAlgorithmTestCase(unittest.TestCase):
     def test_init_data_with_wrong_capacity(self):
@@ -50,11 +51,11 @@ class HungarianAlgorithmTestCase(unittest.TestCase):
         msg = 'Wrong result!'
         self.assertEqual(result, expected_value, msg)
 
-    #test za dużo centrów w porównaniu z capacity
+    #test za dużo centrów w porównaniu z capacity // dwa testy ktore juz sa to pokrywaja, mozna testowac pozostale funkcje
 
-    #test centra*pojemność =/= liczba domów
+    #test centra*pojemność =/= liczba domów // dwa testy ktore juz sa to pokrywaja, mozna testowac pozostale funkcje
     
-    #test dwa domy / dwa centra o tych samych współrzędnych
+    #test dwa domy / dwa centra o tych samych współrzędnych 
     
     #test centrum i dom o tych samych współrzędnych
 
