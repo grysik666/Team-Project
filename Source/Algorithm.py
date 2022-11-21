@@ -30,32 +30,35 @@ class Hungarian_Algorithm:
         """
         text = "Inappropriate type of an object: "
         if not isinstance(centre, list):
-            raise Exception(text + 'centre')
+            raise Exception(text + 'centre.')
         if not isinstance(capacity, list):
-            raise Exception(text + 'capacity')
+            raise Exception(text + 'capacity.')
         if not isinstance(house, list):
-            raise Exception(text + 'house')
-        for i in range(len(self.centre)):
+            raise Exception(text + 'house.')
+        
+        for i in range(len(centre)):
             if (not isinstance(centre[i], list)) or (not isinstance(centre[i][0], int)) or (not isinstance(centre[i][1], int)):
-                raise Exception(text + 'centre')
-        for i in range(len(self.capacity)):
-            if (not isinstance(capacity[i], list)) or (not isinstance(capacity[i][0], int)) or (not isinstance(capacity[i][1], int)):
-                raise Exception(text + 'capacity')
-        for i in range(len(self.house)):
+                raise Exception(text + 'centre.')
+        for i in range(len(house)):
             if (not isinstance(house[i], list)) or (not isinstance(house[i][0], int)) or (not isinstance(house[i][1], int)):
-                raise Exception(text + 'house')
+                raise Exception(text + 'house.')
+            
+        if int(sum(capacity)) != len(house):
+            raise Exception('No. of houses doesn\'t match the capacity.')
+        if len(capacity) != len(centre):
+            raise Exception('No. of centres doesn\'t match the capacity.')
 
-    def distance(self, centre_iterator: int, house_iterator: int):
+    def distance(self, centre: list, house: list):
         """[Function which calculates distance from distribution centre to house.]
 
         Args:
-            centre_iterator (int): [Distribution centre number.]
-            house_iterator (int): [House number.]
+            centre_iterator (list): [Distribution centre coordinates]
+            house_iterator (list): [House coordinates]
 
         Returns:
             [float]: [Distance from distribution centre to house.]
         """
-        return math.sqrt((self.centre[centre_iterator][0]-self.house[house_iterator][0])**2+(self.centre[centre_iterator][1]-self.house[house_iterator][1])**2)
+        return math.sqrt((centre[0] - house[0]) ** 2 + (centre[1] - house[1]) ** 2)
 
     def calculate_adjency_matrix(self):
         """[Function which makes matrix of distances from every distribution centre to every house.]
@@ -63,10 +66,10 @@ class Hungarian_Algorithm:
         Returns:
             [list[list[float]]]: [Matrix of distances from every distribution centre to every house.]
         """
-        A = np.zeros((len(self.centre), len(self.house))) #kolumny odpowiadaja za kolejne domy, wiersze za centra
+        A = np.zeros((len(self.centre) + int(sum(self.capacity)), len(self.house))) #kolumny odpowiadaja za kolejne domy razy pojemnosc, wiersze za centra
         for i in range(A.shape[0]):
             for j in range(A.shape[1]):
-                A[i,j] = self.distance(i,j)
+                A[i,j] = self.distance(self.centre[i], self.house[j])
         return A
 
     def init_potential(self):
@@ -96,11 +99,11 @@ class Hungarian_Algorithm:
         """
         NoOfHouses = int(len(self.house))
         NoOfCentres = int(len(self.centre))
-        G = np.zeros((NoOfCentres + NoOfHouses, NoOfCentres + NoOfHouses)) # najpierw centra, potem domy
-        for i in range(NoOfCentres):
+        G = np.zeros((2 * NoOfHouses, 2 * NoOfHouses)) # najpierw centra razy pojemnosc, potem domy
+        for i in range(NoOfHouses):
             for j in range(NoOfHouses):
-                G[i,j + NoOfCentres] = self.distance(i,j)
-                G[j + NoOfCentres, i] = self.distance(i,j)
+                G[i,j + NoOfCentres] = self.distance(self.centre[i], self.house[j])
+                G[j + NoOfCentres, i] = self.distance(self.centre[i], self.house[j])
         return G
     
     def update_R(self, R, M, IsCentre: bool):
@@ -168,7 +171,20 @@ class Hungarian_Algorithm:
         Returns:
             [type]: [description]
         """
-        # TODO
+        Centre_Capacity_iterator = list(range(len(self.house))) #centra razy pojemnosc
+        House_iterator = list(range(len(self.house)))
+        NoOfHouses = int(len(self.house))
+        NoOfCentres = int(len(self.centre))
+        
+        for i in Centre_Capacity_iterator:
+            for j in House_iterator:
+                if y[i]+y[j + NoOfHouses] == G[i][j]:
+                    if G_y[i][j]!=G[i][j] and G_y[j][i]!=G[i][j]:
+                        G_y[i][j]=G[i][j]
+                else:
+                    if G_y[i][j]==G[i][j] or G_y[j][i]==G[i][j]:
+                        G_y[i][j]=0
+                        G_y[j][i]=0    
         return G_y    
     
     def calculate_delta(self, delta, Z, y):
