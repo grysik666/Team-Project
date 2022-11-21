@@ -37,10 +37,10 @@ class Hungarian_Algorithm:
             raise Exception(text + 'house.')
         
         for i in range(len(centre)):
-            if (not isinstance(centre[i], list)) or (not isinstance(centre[i][0], int)) or (not isinstance(centre[i][1], int)):
+            if (not isinstance(centre[i], list)) or (not isinstance(centre[i][0], float)) or (not isinstance(centre[i][1], float)):
                 raise Exception(text + 'centre.')
         for i in range(len(house)):
-            if (not isinstance(house[i], list)) or (not isinstance(house[i][0], int)) or (not isinstance(house[i][1], int)):
+            if (not isinstance(house[i], list)) or (not isinstance(house[i][0], float)) or (not isinstance(house[i][1], float)):
                 raise Exception(text + 'house.')
             
         if int(sum(capacity)) != len(house):
@@ -66,10 +66,13 @@ class Hungarian_Algorithm:
         Returns:
             [list[list[float]]]: [Matrix of distances from every distribution centre to every house.]
         """
-        A = np.zeros((len(self.centre) + int(sum(self.capacity)), len(self.house))) #kolumny odpowiadaja za kolejne domy razy pojemnosc, wiersze za centra
-        for i in range(A.shape[0]):
-            for j in range(A.shape[1]):
-                A[i,j] = self.distance(self.centre[i], self.house[j])
+        iterator = 0
+        A = np.zeros((len(self.house), len(self.house))) #kolumny odpowiadaja za kolejne domy razy pojemnosc, wiersze za centra
+        for i in range(len(self.centre)):
+            for j in range(int(self.capacity[i])):
+                for k in range(A.shape[1]):
+                    A[iterator,k] = self.distance(self.centre[i], self.house[k]) 
+                iterator += 1
         return A
 
     def init_potential(self):
@@ -97,13 +100,16 @@ class Hungarian_Algorithm:
         Returns:
             [matrix[float]]: [Matrix of distances between centres and houses.]
         """
+        iterator = 0
         NoOfHouses = int(len(self.house))
         NoOfCentres = int(len(self.centre))
         G = np.zeros((2 * NoOfHouses, 2 * NoOfHouses)) # najpierw centra razy pojemnosc, potem domy
-        for i in range(NoOfHouses):
-            for j in range(NoOfHouses):
-                G[i,j + NoOfCentres] = self.distance(self.centre[i], self.house[j])
-                G[j + NoOfCentres, i] = self.distance(self.centre[i], self.house[j])
+        for i in range(NoOfCentres):
+            for j in range(int(self.capacity[i])):
+                for k in range(NoOfHouses):
+                    G[iterator,k + NoOfHouses] = self.distance(self.centre[i], self.house[k])
+                    G[k + NoOfHouses, iterator] = self.distance(self.centre[i], self.house[k])
+                iterator += 1
         return G
     
     def update_R(self, R, M, IsCentre: bool):
@@ -131,11 +137,11 @@ class Hungarian_Algorithm:
             [matrix]: [Oriented subrgraph which contains all tight edges.]
         """
         # copy()
-        NoOfCentres = int(len(self.centre))        
-        path = BFS(G_y,R_C,R_H) # parzyste to centra
+        NoOfCentres = int(len(self.house))
+        path = BFS(G_y,R_C,R_H) # zwraca sciezke, na parzystych miejscach beda centra, nieparzyste - domy
         
         for i in range(len(path) - 1):
-            temp = G_y[path[i]][path[i + 1]]
+            temp = G_y[path[i]][path[i + 1] + NoOfCentres]
             G_y[path[i]][path[i + 1] + NoOfCentres] = 0
             G_y[path[i + 1] + NoOfCentres][path[i]] = temp
         return G_y
@@ -147,13 +153,13 @@ class Hungarian_Algorithm:
             [type]: [description]
         """
         M = []
-        Centre_iterator = list(range(len(self.centre))) # indeksy centrow
-        NoOfHouses = int(len(self.house))
+        # Centre_iterator = list(range(len(self.centre))) # indeksy centrow
+        NoOfHouses = int(len(self.centre))
         NoOfCentres = int(len(self.centre))
-        for i in Centre_iterator:
+        for i in range(NoOfCentres):
             for j in range(NoOfCentres, NoOfCentres + NoOfHouses):
-                if G_y[j][i] > 0:
-                    M.append([i,j])                
+                if G_y[j][i] > 0: # [j][i] poniewaz interesuja nas tylko krawedzie z klasy H do klasy C
+                    M.append([i,j]) # M jako pary (centrum, dom)              
         return M
     
     def update_Z(self, Z, G_y, R_C, R_H):
@@ -162,7 +168,12 @@ class Hungarian_Algorithm:
         Returns:
             [type]: [description]
         """
-        # TODO
+        Z = R_C.copy()
+        for vertex in R_C:
+            temp = BFS_vertex(G_y,vertex) 
+            for w in temp:
+                if w not in Z:
+                    Z.append(w) # Trzeba bedzie jakos sprytnie rozrozniac ktore wierzcholki to centra a ktore to domy, ale to dopiero po implementacji BFS'a
         return Z
     
     def update_Gy(self, G_y, G, y):
@@ -174,17 +185,16 @@ class Hungarian_Algorithm:
         Centre_Capacity_iterator = list(range(len(self.house))) #centra razy pojemnosc
         House_iterator = list(range(len(self.house)))
         NoOfHouses = int(len(self.house))
-        NoOfCentres = int(len(self.centre))
-        
+        # na pierwszy rzut oka funkcja wydaje sie byc ok, ale nie testowalem czy wszystko dziala tak jak powinno
         for i in Centre_Capacity_iterator:
             for j in House_iterator:
-                if y[i]+y[j + NoOfHouses] == G[i][j]:
-                    if G_y[i][j]!=G[i][j] and G_y[j][i]!=G[i][j]:
-                        G_y[i][j]=G[i][j]
+                if y[i]+y[j + NoOfHouses] == G[i][j + NoOfHouses]:
+                    if G_y[i][j + NoOfHouses] != G[i][j + NoOfHouses] and G_y[j + NoOfHouses][i] != G[i][j + NoOfHouses]:
+                        G_y[i][j + NoOfHouses] = G[i][j + NoOfHouses]
                 else:
-                    if G_y[i][j]==G[i][j] or G_y[j][i]==G[i][j]:
-                        G_y[i][j]=0
-                        G_y[j][i]=0    
+                    if G_y[i][j + NoOfHouses] == G[i][j + NoOfHouses] or G_y[j + NoOfHouses][i] == G[i][j + NoOfHouses]:
+                        G_y[i][j + NoOfHouses] = 0
+                        G_y[j + NoOfHouses][i] = 0    
         return G_y    
     
     def calculate_delta(self, delta, Z, y):
@@ -207,16 +217,16 @@ class Hungarian_Algorithm:
         NoOfHouses = int(len(self.house))
         NoOfCentres = int(len(self.centre))
         Y = self.init_potential()
-        G_y = np.zeros((NoOfCentres + NoOfHouses, NoOfCentres + NoOfHouses))
-        R_C = list(range(NoOfCentres)) # wierzcholki niepokryte przez M
+        G_y = np.zeros((2 * NoOfHouses))
+        R_C = list(range(NoOfHouses)) # wierzcholki niepokryte przez M
         R_H = list(range(NoOfHouses)) # wierzcholki niepokryte przez M
         Z = list(range(NoOfHouses))
-        Centre_iterator = list(range(len(self.centre))) # indeksy centrow
+        Centre_iterator = list(range(len(self.house))) # indeksy centrow
         House_iterator = list(range(len(self.house))) # indeksy domow
         
-        
         while len(M) < (NoOfHouses):
-            
+            # Mozliwe ze na poczatku trzeba bedzie zaktualizowac G_y (update_Gy) bo potencjaly wybieramy sprytniej 
+            # wiec możliwe ze juz na samym poczatku bedziemy miec ciasne krawedzie
             if len(intersection(R_H, Z)) != 0:
                 G_y = self.reverse_path(G_y, R_C, R_H)
             else:
@@ -275,6 +285,21 @@ def BFS(G, A, B):
     '''A,B podzbiory wierzcholkow G
     zwraca sciezke z wierzcholka z A  do wierzcholka z B o ile taka istnieje''' 
     # TODO
+    return []
+
+# *****
+# Byc moze da sie jakos polaczyc BFS i BFS_vertex w jedna funkcje, albo w jednej funkcji wywolywac druga
+# *****
+
+def BFS_vertex(G, v):
+    """_summary_
+
+    Args:
+        G (_type_): _description_
+        v (_type_): _description_
+    """
+    '''v wierzcholek z G
+    zwraca wierzcholki do ktorych mozna w G dojsc z v''' 
     return []
 
 def load_from_file(path):
