@@ -12,7 +12,7 @@ class Hungarian_Algorithm:
             house ([list[list[int]]]): [Coordinates of all houses. For example: [[-1,2], [3,1], [-4,2], [-1,-2]] ]
         """
         self.check_init_data(centre, capacity, house)
-        
+
         self.centre = centre # postaci: [[0,1], [-3,2], [-1,5]]
         self.capacity = capacity # postaci [1,1,2]
         self.house = house # postaci [[-1,2], [3,1], [-4,2], [-1,-2]] 
@@ -197,13 +197,19 @@ class Hungarian_Algorithm:
                         G_y[j + NoOfHouses][i] = 0    
         return G_y    
     
-    def calculate_delta(self, delta, Z, y):
+    def calculate_delta(self, Z, Y, Centre, Houses):
         """[summary]
 
         Returns:
             [type]: [description]
         """
-        # TODO
+        ZcapC = intersection(Z, Centre)
+        HminZ = subtraction(Houses, Z)
+        delta = self.distance(ZcapC[0], HminZ[0]) - Y[ZcapC[0]] - Y[HminZ[0]]
+        for i in ZcapC:
+            for j in HminZ:
+                if self.distance(ZcapC[i], HminZ[j]) - Y[ZcapC[i]] - Y[HminZ[j]] < delta:
+                    delta = self.distance(ZcapC[i], HminZ[j]) - Y[ZcapC[i]] - Y[HminZ[j]]
         return delta
         
     def main_algorithm(self):
@@ -230,7 +236,7 @@ class Hungarian_Algorithm:
             if len(intersection(R_H, Z)) != 0:
                 G_y = self.reverse_path(G_y, R_C, R_H)
             else:
-                delta = self.calculate_delta
+                delta = self.calculate_delta(Z, Y, Centre_iterator, House_iterator)
                 Z_Intersection_C = intersection(Z, Centre_iterator)
                 Z_Intersection_H = intersection(Z, House_iterator)
 
@@ -284,7 +290,7 @@ def BFS(G, A, B):
     """
     '''A,B podzbiory wierzcholkow G
     zwraca sciezke z wierzcholka z A  do wierzcholka z B o ile taka istnieje''' 
-    # TODO
+    #  
     return []
 
 # *****
