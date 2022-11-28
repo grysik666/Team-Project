@@ -51,17 +51,116 @@ class HungarianAlgorithmTestCase(unittest.TestCase):
         msg = 'Wrong result!'
         self.assertEqual(result, expected_value, msg)
 
-    #test za dużo centrów w porównaniu z capacity // dwa testy ktore juz sa to pokrywaja, mozna testowac pozostale funkcje
-
-    #test centra*pojemność =/= liczba domów // dwa testy ktore juz sa to pokrywaja, mozna testowac pozostale funkcje
-    
     #test dwa domy / dwa centra o tych samych współrzędnych 
+    
+    def test_two_centres_in_one_place(self):
+        # [GIVEN]
+        # Two centres with the same coordinates
+        centre = [[0,0], [0,0]]
+        capacity = [1, 1]
+        house = [[4,-3], [-1,6]]
+       
+        
+        # [WHEN]
+        # Calculate Hungarian Algorithm 
+        result = Algorithm.Hungarian_Algorithm(centre, capacity, house)
+        
+        # [THEN]
+        # Build perfect matching with simple methods.
+        # !!!
+        expected_value =   0      #TO DO
+        # !!!
+        msg = 'Wrong result!'
+        self.assertEqual(result, expected_value, msg)
+    
+    
     
     #test centrum i dom o tych samych współrzędnych
 
+    def test_two_centres_in_one_place(self):
+        # [GIVEN]
+        # Two centres with the same coordinates
+        centre = [[0,0], [-1,6]]
+        capacity = [1, 1]
+        house = [[4,-3], [0,0]]
+       
+        
+        # [WHEN]
+        # Calculate Hungarian Algorithm 
+        result = Algorithm.Hungarian_Algorithm(centre, capacity, house)
+        
+        # [THEN]
+        # Build perfect matching with simple methods.
+        # !!!
+        expected_value =  0       #TO DO
+        # !!!
+        msg = 'Wrong result!'
+        self.assertEqual(result, expected_value, msg)
+
     #test calculate_adjency_matrix
+    def test_calculate_adjency_matrix(self):
+       
+
+        # [GIVEN]
+        # Correct example of class Hungarian_Algorithm
+        for _ in range(3):
+            Centre.append([random.randint(-10,10), random.randint(-10,10)])
+            Capacities.append([random.randint(1,3)])
+        for _ in range(sum(Capacities)):
+            House.append([random.randint(-10,10), random.randint(-10,10)])
+       
+        
+        # [WHEN]
+        # Calculate adjency matrix in class Hungarian_Algorithm.
+        result = Algorithm.Hungarian_Algorithm.calculate_adjency_matrix(centre, capacity, house)
+        
+        # [THEN]
+        # Calculate adjency matrix outside class Hungarian_Algorithm.
+        iterator = 0
+        A = np.zeros((len(house), len(house))) #kolumny odpowiadaja za kolejne domy razy pojemnosc, wiersze za centra
+        for i in range(len(centre)):
+            for j in range(int(capacity[i])):
+                for k in range(A.shape[1]):
+                    A[iterator,k] = distance(centre[i], house[k]) 
+                iterator += 1
+        expected_value = A
+        msg = 'Wrong result!'
+        self.assertEqual(result, expected_value, msg)
+
 
     #test generate_bipartite_graph
+    def test_generate_bipartite_graph(self):
+       
+
+        # [GIVEN]
+        # Correct example of class Hungarian_Algorithm
+        for _ in range(3):
+            Centre.append([random.randint(-10,10), random.randint(-10,10)])
+            Capacities.append([random.randint(1,3)])
+        for _ in range(sum(Capacities)):
+            House.append([random.randint(-10,10), random.randint(-10,10)])
+       
+        
+        # [WHEN]
+        # Create bipartite graph in class Hungarian_Algorithm.
+        result = Algorithm.Hungarian_Algorithm.generate_bipartite_graph(centre, capacity, house)
+        
+        # [THEN]
+        # Calculate bipartitie graph outside class Hungarian_Algorithm.
+        iterator = 0
+        NoOfHouses = int(len(house))
+        NoOfCentres = int(len(centre))
+        G = np.zeros((2 * NoOfHouses, 2 * NoOfHouses)) # najpierw centra razy pojemnosc, potem domy
+        for i in range(NoOfCentres):
+            for j in range(int(capacity[i])):
+                for k in range(NoOfHouses):
+                    G[iterator,k + NoOfHouses] = distance(centre[i], house[k])
+                    G[k + NoOfHouses, iterator] = distance(centre[i], house[k])
+                iterator += 1
+        return G
+        msg = 'Wrong result!'
+        self.assertEqual(result, expected_value, msg)
+
 
     #test reverse path
     
@@ -75,7 +174,28 @@ class HungarianAlgorithmTestCase(unittest.TestCase):
 
     #test delta
 
+    
     #test całości
+
+    def test_hungarian_algorithm(self):
+        # [GIVEN]
+        # Centres, Capacities, Houses
+        Centre = []
+        Capacities = []
+        House = []
+        for _ in range(3):
+            Centre.append([random.randint(-10,10), random.randint(-10,10)])
+            Capacities.append([random.randint(1,3)])
+        for _ in range(sum(Capacities)):
+            House.append([random.randint(-10,10), random.randint(-10,10)])
+
+        # [WHEN]
+        # Starting main algorithm
+        G = Algorithm.Hungarian_Algorithm(Centre, Capacities, House)
+        Algorithm.Hungarian_Algorithm.main_algorithm(G)
+
+        # [THEN]
+        # Perfect matching is calculated 
         
     
 if __name__ == '__main__':

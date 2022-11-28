@@ -67,7 +67,7 @@ class Hungarian_Algorithm:
             [list[list[float]]]: [Matrix of distances from every distribution centre to every house.]
         """
         iterator = 0
-        A = np.zeros((len(self.house), len(self.house))) #kolumny odpowiadaja za kolejne domy razy pojemnosc, wiersze za centra
+        A = np.zeros((len(self.house), len(self.house))) #kolumny odpowiadaja za kolejne centra razy pojemnosc, wiersze za domy
         for i in range(len(self.centre)):
             for j in range(int(self.capacity[i])):
                 for k in range(A.shape[1]):
