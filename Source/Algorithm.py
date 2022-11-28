@@ -125,7 +125,7 @@ class Hungarian_Algorithm:
             i = 1
         for pairs in M:
             if pairs[i] in R:
-                R = delete_element_from_list(R, pairs[0])
+                R = delete_element_from_list(R, pairs[i])
             if R == None:
                 return []
         return R
@@ -136,14 +136,11 @@ class Hungarian_Algorithm:
         Returns:
             [matrix]: [Oriented subrgraph which contains all tight edges.]
         """
-        # copy()
-        NoOfCentres = int(len(self.house))
         path = BFS(G_y,R_C,R_H) # zwraca sciezke, na parzystych miejscach beda centra, nieparzyste - domy
-        
         for i in range(len(path) - 1):
-            temp = G_y[path[i]][path[i + 1] + NoOfCentres]
-            G_y[path[i]][path[i + 1] + NoOfCentres] = 0
-            G_y[path[i + 1] + NoOfCentres][path[i]] = temp
+            temp = G_y[path[i]][path[i + 1]]
+            G_y[path[i]][path[i + 1]] = 0
+            G_y[path[i + 1]][path[i]] = temp
         return G_y
 
     def update_M(self, M, G_y):
@@ -154,8 +151,8 @@ class Hungarian_Algorithm:
         """
         M = []
         # Centre_iterator = list(range(len(self.centre))) # indeksy centrow
-        NoOfHouses = int(len(self.centre))
-        NoOfCentres = int(len(self.centre))
+        NoOfHouses = int(len(self.house))
+        NoOfCentres = int(len(self.house))
         for i in range(NoOfCentres):
             for j in range(NoOfCentres, NoOfCentres + NoOfHouses):
                 if G_y[j][i] > 0: # [j][i] poniewaz interesuja nas tylko krawedzie z klasy H do klasy C
@@ -176,7 +173,7 @@ class Hungarian_Algorithm:
                     Z.append(w) # Trzeba bedzie jakos sprytnie rozrozniac ktore wierzcholki to centra a ktore to domy, ale to dopiero po implementacji BFS'a
         return Z
     
-    def update_Gy(self, G_y, G, y):
+    def update_Gy(self, G, y, G_y):
         """[summary]
 
         Returns:
@@ -203,13 +200,14 @@ class Hungarian_Algorithm:
         Returns:
             [type]: [description]
         """
-        ZcapC = intersection(Z, Centre)
-        HminZ = subtraction(Houses, Z)
-        delta = self.distance(ZcapC[0], HminZ[0]) - Y[ZcapC[0]] - Y[HminZ[0]]
-        for i in ZcapC:
-            for j in HminZ:
-                if self.distance(ZcapC[i], HminZ[j]) - Y[ZcapC[i]] - Y[HminZ[j]] < delta:
-                    delta = self.distance(ZcapC[i], HminZ[j]) - Y[ZcapC[i]] - Y[HminZ[j]]
+        G = self.generate_bipartite_graph()
+        Z_intersection_C = intersection(Z, Centre)
+        H_minus_Z = subtraction(Houses, Z)
+        delta = G[Z_intersection_C[0]][H_minus_Z[0]] - Y[Z_intersection_C[0]] - Y[H_minus_Z[0]]
+        for i in Z_intersection_C:
+            for j in H_minus_Z:
+                if (G[i][j] - Y[i] - Y[j]) < delta:
+                    delta = G[i][j] - Y[i] - Y[j]
         return delta
         
     def main_algorithm(self):
@@ -223,14 +221,15 @@ class Hungarian_Algorithm:
         NoOfHouses = int(len(self.house))
         NoOfCentres = int(len(self.centre))
         Y = self.init_potential()
-        G_y = np.zeros((2 * NoOfHouses))
+        G_y = np.zeros(((2 * NoOfHouses), (2 * NoOfHouses)))
+       # G_y = self.update_Gy(G, Y, G_y)
         R_C = list(range(NoOfHouses)) # wierzcholki niepokryte przez M
-        R_H = list(range(NoOfHouses)) # wierzcholki niepokryte przez M
+        R_H = list(range(NoOfHouses,2*len(self.house))) # wierzcholki niepokryte przez M
         Z = list(range(NoOfHouses))
         Centre_iterator = list(range(len(self.house))) # indeksy centrow
-        House_iterator = list(range(len(self.house))) # indeksy domow
-        
-        while len(M) < (NoOfHouses):
+        House_iterator = list(range(NoOfHouses,2*len(self.house))) # indeksy domow
+
+        while len(M) < NoOfHouses:
             # Mozliwe ze na poczatku trzeba bedzie zaktualizowac G_y (update_Gy) bo potencjaly wybieramy sprytniej 
             # wiec możliwe ze juz na samym poczatku bedziemy miec ciasne krawedzie
             if len(intersection(R_H, Z)) != 0:
@@ -239,19 +238,16 @@ class Hungarian_Algorithm:
                 delta = self.calculate_delta(Z, Y, Centre_iterator, House_iterator)
                 Z_Intersection_C = intersection(Z, Centre_iterator)
                 Z_Intersection_H = intersection(Z, House_iterator)
-
                 for i in Z_Intersection_C: # dodawanie odejmowanie delty
                     Y[i] += delta
                 for j in Z_Intersection_H:
                     Y[j] -= delta
             
                 G_y = self.update_Gy(G, Y, G_y) # dodaje ciasne i usuwam nieciasne krawedzie z Gy
-
-                M = self.update_M(M, G_y)
-                R_C = self.update_R(R_C, M, True)
-                R_H = self.update_R(R_C, M, False)
-                Z = self.update_Z(Z, G_y, R_C, R_H)
-                
+            M = self.update_M(M, G_y)
+            R_C = self.update_R(R_C, M, True)
+            R_H = self.update_R(R_H, M, False)
+            Z = self.update_Z(Z, G_y, R_C, R_H)
         return M
                 
                 
@@ -290,12 +286,33 @@ def BFS(G, A, B):
     """
     '''A,B podzbiory wierzcholkow G
     zwraca sciezke z wierzcholka z A  do wierzcholka z B o ile taka istnieje''' 
-    #  
-    return []
+    n = len(G)
+    for v in A:
+        colors = [0]*n
+        colors[v] = 1
+        parent = [None]*n
+        dist = [-1]*n
+        dist[v] = 0
+        Q = [v]
+        while len(Q) != 0:
+            u = Q[0]
+            Q.pop(0)
+            neighbours = []
+            for i in range(n):
+                if G[u][i] != 0:
+                    neighbours.append(i)
+            for w in neighbours:
+                if colors[w] == 0:
+                    colors[w] = 1
+                    parent[w] = u
+                    if w in B:
+                        temp = w
+                        path = [temp]
+                        while parent[temp] != None:
+                            path.append(parent[temp])
+                            temp = parent[temp]
+                        return path[::-1]
 
-# *****
-# Byc moze da sie jakos polaczyc BFS i BFS_vertex w jedna funkcje, albo w jednej funkcji wywolywac druga
-# *****
 
 def BFS_vertex(G, v):
     """_summary_
@@ -306,7 +323,32 @@ def BFS_vertex(G, v):
     """
     '''v wierzcholek z G
     zwraca wierzcholki do ktorych mozna w G dojsc z v''' 
-    return []
+    n = len(G)
+    colors = [0]*n
+    colors[v] = 1
+    parent = [None]*n
+    dist = [-1]*n
+    dist[v] = 0
+    Q = [v]
+    while len(Q) != 0:
+        u = Q[0]
+        Q.pop(0)
+        neighbours = []
+        for i in range(n):
+            if G[u][i] != 0:
+                neighbours.append(i)
+        for w in neighbours:
+            if colors[w] == 0:
+                colors[w] = 1
+                parent[w] = u
+                dist[w] = dist[u] + 1
+                Q.append(w)
+        colors[u] = 2
+    results = []
+    for i in range(n):
+        if dist[i] > -1:
+            results.append(i)
+    return results
 
 def load_from_file(path):
     """[Function which loads data about centres and houses from file.]
@@ -336,3 +378,4 @@ def load_from_file(path):
         house.append([temp[2][j],temp[2][j+1]])
 
     return centre, capacity, house
+
