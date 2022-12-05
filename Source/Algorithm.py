@@ -252,7 +252,7 @@ class Hungarian_Algorithm:
                 
                 
 def intersection(list1, list2):
-    """[Function makes intersection of two any lists. I returns elements from first list list which are on second list, too.]
+    """[Function makes intersection of two any lists. It returns elements from first list list which are on second list, too.]
 
         Returns:
             [list]: [Intersection of two lists.]

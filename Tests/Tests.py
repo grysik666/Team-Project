@@ -168,6 +168,50 @@ class HungarianAlgorithmTestCase(unittest.TestCase):
 
     #test działań na listach
 
+    def test_intersection(self):
+        # [GIVEN]
+        # Two lists
+        l1 = [1, 2, 3, -1, -3, 0]
+        l2 = [0, -3, -1, 6, 2, 3, -5]
+        
+        # [WHEN]
+        # Intersection of this two lists.
+        result = Algorithm.Hungarian_Algorithm.intersection(l1, l2)
+        
+        # [THEN]
+        # Check result.
+        msg = 'Wrong result!'
+        self.assertEqual(result, [2, 3, -1, -3, 0], msg)
+
+    def test_subtraction(self):
+        # [GIVEN]
+        # Two lists
+        l1 = [1, 2, 3, -1, -3, 0]
+        l2 = [0, -3, -1, 6, 2, 3, -5]
+        
+        # [WHEN]
+        # Intersection of this two lists.
+        result = Algorithm.Hungarian_Algorithm.subtraction(l1, l2)
+        
+        # [THEN]
+        # Check result.
+        msg = 'Wrong result!'
+        self.assertEqual(result, [1], msg)
+
+    def test_subtraction(self):
+        # [GIVEN]
+        # Two lists
+        l1 = [1, 2, 3, -1, -3, 0]
+        
+        # [WHEN]
+        # Intersection of this two lists.
+        result = Algorithm.Hungarian_Algorithm.subtraction(l1, -3)
+        
+        # [THEN]
+        # Check result.
+        msg = 'Wrong result!'
+        self.assertEqual(result, [1, 2, 3, -1, 0], msg)
+
     #test BFS
 
     #test wszystkich śmiesznych małych funkcji update
