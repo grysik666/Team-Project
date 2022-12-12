@@ -157,7 +157,7 @@ class HungarianAlgorithmTestCase(unittest.TestCase):
                     G[iterator,k + NoOfHouses] = distance(centre[i], house[k])
                     G[k + NoOfHouses, iterator] = distance(centre[i], house[k])
                 iterator += 1
-        return G
+        expected_value = G
         msg = 'Wrong result!'
         self.assertEqual(result, expected_value, msg)
 
@@ -166,6 +166,24 @@ class HungarianAlgorithmTestCase(unittest.TestCase):
     
     #test wektor potencjałów
 
+    def test_init_potential(self):
+        # [GIVEN]
+        # Correct example of class Hungarian_Algorithm
+        centre = [[0,0], [1,1]]
+        capacity = [1, 1]
+        house = [[-3, -4], [4, 5]]
+
+        # [WHEN]
+        # Calculate potentials in class Hungarian_Algorithm.
+        result = Algorithm.Hungarian_Algorithm.init_potential(centre, capacity, house)
+
+        # [THEN]
+        # Calculate potentials. We know that centre 1 is closer house 1 and centre 2 is closer house 2.
+        expected_value = [sqrt(3^2 + 4^2), sqrt((4-1)^2 + (5-1)^2), sqrt(3^2 + 4^2), sqrt((4-1)^2 + (5-1)^2)]
+        msg = 'Wrong result!'
+        self.assertEqual(result, expected_value, msg)
+
+        
     #test działań na listach
 
     def test_intersection(self):
