@@ -1,49 +1,54 @@
 import unittest
 from Source import Algorithm
 import math
+import random
+import numpy as np
 
 class HungarianAlgorithmTestCase(unittest.TestCase):
-    def test_init_data_with_wrong_capacity(self):
+    
+    def test_init_data_with_wrong_Capacity(self):
         # [GIVEN]
-        # Capacity that doesn't match centres
-        centre = [[1,2], [3,-1], [-3,0]]
-        capacity = [1, 1, 1, 1]
-        house = [[0,-3], [-1,6], [2,3], [-5,-1]]
+        # Capacity that doesn't match Centres
+        Centre = [[1,2], [3,-1], [-3,0]]
+        Capacity = [1, 1, 1, 1]
+        House = [[0,-3], [-1,6], [2,3], [-5,-1]]
         
         # [WHEN]
-        # Creating new class with wrong number of capacity
-        # Algorithm.Hungarian_Algorithm(centre, capacity, house)
+        # Creating new class with wrong number of Capacity
+        # Algorithm.Hungarian_Algorithm(Centre, Capacity, House)
         
         # [THEN]
         # An error ocures
-        self.assertRaises(Exception, Hungarian_Algorithm, centre, capacity, house)
+        self.assertRaises(Exception, Algorithm.Hungarian_Algorithm, Centre, Capacity, House)
 
-    def test_init_data_with_wrong_no_of_houses(self):
+
+    def test_init_data_with_wrong_No_of_Houses(self):
         # [GIVEN]
-        # Centres and capacities that don't match houses
-        centre = [[1,2], [3,-1], [-3,0]]
-        capacity = [1, 1, 1]
-        house = [[0,-3], [-1,6], [2,3], [-5,-1]]
+        # Centres and Capacity that don't match Houses
+        Centre = [[1,2], [3,-1], [-3,0]]
+        Capacity = [1, 1, 1]
+        House = [[0,-3], [-1,6], [2,3], [-5,-1]]
         
         # [WHEN]
-        # Creating new class with wrong number of houses
-        # Algorithm.Hungarian_Algorithm(centre, capacity, house)
+        # Creating new class with wrong number of Houses
+        # Algorithm.Hungarian_Algorithm(Centre, Capacity, House)
         
         # [THEN]
         # An error ocures
-        self.assertRaises(Exception, Hungarian_Algorithm, centre, capacity, house)
+        self.assertRaises(Exception, Algorithm.Hungarian_Algorithm, Centre, Capacity, House)
+        
         
     def test_distance_function(self):
         # [GIVEN]
         # Object of type Hungarian_Algorithm
-        centre = [[0,0], [3,-1], [-3,0]]
-        capacity = [1, 1, 1]
-        house = [[4,-3], [-1,6], [2,3]]
-        A = Algorithm.Hungarian_Algorithm(centre, capacity, house)
+        Centre = [[0,0], [3,-1], [-3,0]]
+        Capacity = [1, 1, 1]
+        House = [[4,-3], [-1,6], [2,3]]
+        A = Algorithm.Hungarian_Algorithm(Centre, Capacity, House)
         
         # [WHEN]
         # Calculating the distance between two points
-        result = A.distance(centre[0], house[0])
+        result = A.distance(Centre[0], House[0])
         
         # [THEN]
         # Distance between two points is calculated
@@ -51,140 +56,43 @@ class HungarianAlgorithmTestCase(unittest.TestCase):
         msg = 'Wrong result!'
         self.assertEqual(result, expected_value, msg)
 
-    #test dwa domy / dwa centra o tych samych współrzędnych 
-    
+
     def test_two_centres_in_one_place(self):
         # [GIVEN]
         # Two centres with the same coordinates
         centre = [[0,0], [0,0]]
         capacity = [1, 1]
-        house = [[4,-3], [-1,6]]
-       
+        house = [[-4,-3], [-3,4]]
         
         # [WHEN]
         # Calculate Hungarian Algorithm 
-        result = Algorithm.Hungarian_Algorithm(centre, capacity, house)
-        
+        G = Algorithm.Hungarian_Algorithm(centre, capacity, house)
+        _, Result = G.main_algorithm()
         # [THEN]
-        # Build perfect matching with simple methods.
-        # !!!
-        expected_value =   0      #TO DO
-        # !!!
+        # Calculate perfect matching.
+        expected_value = 10.0
         msg = 'Wrong result!'
-        self.assertEqual(result, expected_value, msg)
+        self.assertEqual(Result, expected_value, msg)
     
     
-    
-    #test centrum i dom o tych samych współrzędnych
-
-    def test_two_centres_in_one_place(self):
-        # [GIVEN]
-        # Two centres with the same coordinates
-        centre = [[0,0], [-1,6]]
-        capacity = [1, 1]
-        house = [[4,-3], [0,0]]
-       
-        
-        # [WHEN]
-        # Calculate Hungarian Algorithm 
-        result = Algorithm.Hungarian_Algorithm(centre, capacity, house)
-        
-        # [THEN]
-        # Build perfect matching with simple methods.
-        # !!!
-        expected_value =  0       #TO DO
-        # !!!
-        msg = 'Wrong result!'
-        self.assertEqual(result, expected_value, msg)
-
-    #test calculate_adjency_matrix
-    def test_calculate_adjency_matrix(self):
-       
-
-        # [GIVEN]
-        # Correct example of class Hungarian_Algorithm
-        for _ in range(3):
-            Centre.append([random.randint(-10,10), random.randint(-10,10)])
-            Capacities.append([random.randint(1,3)])
-        for _ in range(sum(Capacities)):
-            House.append([random.randint(-10,10), random.randint(-10,10)])
-       
-        
-        # [WHEN]
-        # Calculate adjency matrix in class Hungarian_Algorithm.
-        result = Algorithm.Hungarian_Algorithm.calculate_adjency_matrix(centre, capacity, house)
-        
-        # [THEN]
-        # Calculate adjency matrix outside class Hungarian_Algorithm.
-        iterator = 0
-        A = np.zeros((len(house), len(house))) #kolumny odpowiadaja za kolejne domy razy pojemnosc, wiersze za centra
-        for i in range(len(centre)):
-            for j in range(int(capacity[i])):
-                for k in range(A.shape[1]):
-                    A[iterator,k] = distance(centre[i], house[k]) 
-                iterator += 1
-        expected_value = A
-        msg = 'Wrong result!'
-        self.assertEqual(result, expected_value, msg)
-
-
-    #test generate_bipartite_graph
-    def test_generate_bipartite_graph(self):
-       
-
-        # [GIVEN]
-        # Correct example of class Hungarian_Algorithm
-        for _ in range(3):
-            Centre.append([random.randint(-10,10), random.randint(-10,10)])
-            Capacities.append([random.randint(1,3)])
-        for _ in range(sum(Capacities)):
-            House.append([random.randint(-10,10), random.randint(-10,10)])
-       
-        
-        # [WHEN]
-        # Create bipartite graph in class Hungarian_Algorithm.
-        result = Algorithm.Hungarian_Algorithm.generate_bipartite_graph(centre, capacity, house)
-        
-        # [THEN]
-        # Calculate bipartitie graph outside class Hungarian_Algorithm.
-        iterator = 0
-        NoOfHouses = int(len(house))
-        NoOfCentres = int(len(centre))
-        G = np.zeros((2 * NoOfHouses, 2 * NoOfHouses)) # najpierw centra razy pojemnosc, potem domy
-        for i in range(NoOfCentres):
-            for j in range(int(capacity[i])):
-                for k in range(NoOfHouses):
-                    G[iterator,k + NoOfHouses] = distance(centre[i], house[k])
-                    G[k + NoOfHouses, iterator] = distance(centre[i], house[k])
-                iterator += 1
-        expected_value = G
-        msg = 'Wrong result!'
-        self.assertEqual(result, expected_value, msg)
-
-
-    #test reverse path
-    
-    #test wektor potencjałów
-
     def test_init_potential(self):
         # [GIVEN]
         # Correct example of class Hungarian_Algorithm
-        centre = [[0,0], [1,1]]
-        capacity = [1, 1]
-        house = [[-3, -4], [4, 5]]
+        Centre = [[0,0], [1,1]]
+        Capacity = [1, 1]
+        House = [[-3, -4], [4, 5]]
 
         # [WHEN]
         # Calculate potentials in class Hungarian_Algorithm.
-        result = Algorithm.Hungarian_Algorithm.init_potential(centre, capacity, house)
+        G = Algorithm.Hungarian_Algorithm(Centre, Capacity, House)
+        Result = G.init_potential()
 
         # [THEN]
-        # Calculate potentials. We know that centre 1 is closer house 1 and centre 2 is closer house 2.
-        expected_value = [sqrt(3^2 + 4^2), sqrt((4-1)^2 + (5-1)^2), sqrt(3^2 + 4^2), sqrt((4-1)^2 + (5-1)^2)]
+        # Calculate potentials. We know that Centre 1 is closer House 1 and Centre 2 is closer House 2.
+        expected_value = np.array([0., 0., math.sqrt(3**2 + 4**2), math.sqrt((4 - 1)**2 + (5 - 1)**2)])
         msg = 'Wrong result!'
-        self.assertEqual(result, expected_value, msg)
+        self.assertEqual(Result.tolist(), expected_value.tolist(), msg)
 
-        
-    #test działań na listach
 
     def test_intersection(self):
         # [GIVEN]
@@ -194,12 +102,13 @@ class HungarianAlgorithmTestCase(unittest.TestCase):
         
         # [WHEN]
         # Intersection of this two lists.
-        result = Algorithm.Hungarian_Algorithm.intersection(l1, l2)
+        result = Algorithm.intersection(l1, l2)
         
         # [THEN]
         # Check result.
         msg = 'Wrong result!'
         self.assertEqual(result, [2, 3, -1, -3, 0], msg)
+
 
     def test_subtraction(self):
         # [GIVEN]
@@ -209,56 +118,93 @@ class HungarianAlgorithmTestCase(unittest.TestCase):
         
         # [WHEN]
         # Intersection of this two lists.
-        result = Algorithm.Hungarian_Algorithm.subtraction(l1, l2)
+        result = Algorithm.subtraction(l1, l2)
         
         # [THEN]
         # Check result.
         msg = 'Wrong result!'
         self.assertEqual(result, [1], msg)
 
-    def test_subtraction(self):
+
+    def test_subtraction2(self):
         # [GIVEN]
         # Two lists
         l1 = [1, 2, 3, -1, -3, 0]
         
         # [WHEN]
         # Intersection of this two lists.
-        result = Algorithm.Hungarian_Algorithm.subtraction(l1, -3)
+        result = Algorithm.subtraction(l1, [-3])
         
         # [THEN]
         # Check result.
         msg = 'Wrong result!'
         self.assertEqual(result, [1, 2, 3, -1, 0], msg)
+        
 
-    #test BFS
-
-    #test wszystkich śmiesznych małych funkcji update
-
-    #test delta
-
-    
-    #test całości
-
-    def test_hungarian_algorithm(self):
+    def test_hungarian_algorithm_length_of_matching(self):
         # [GIVEN]
-        # Centres, Capacities, Houses
+        # Centres, Capacity, Houses
         Centre = []
-        Capacities = []
+        Capacity = []
         House = []
         for _ in range(3):
             Centre.append([random.randint(-10,10), random.randint(-10,10)])
-            Capacities.append([random.randint(1,3)])
-        for _ in range(sum(Capacities)):
+            Capacity.append(random.randint(1,3))
+        for _ in range(sum(Capacity)):
             House.append([random.randint(-10,10), random.randint(-10,10)])
 
         # [WHEN]
-        # Starting main algorithm
-        G = Algorithm.Hungarian_Algorithm(Centre, Capacities, House)
-        Algorithm.Hungarian_Algorithm.main_algorithm(G)
+        # Calculate perfect matching
+        G = Algorithm.Hungarian_Algorithm(Centre, Capacity, House)
+        M, _ = G.main_algorithm()
 
         # [THEN]
         # Perfect matching is calculated 
+        expected_value = sum(Capacity)
+        msg = 'Wrong result!'
+        self.assertEqual(len(M), expected_value, msg)
         
+        
+    def test_hungarian_algorithm_matching(self):  
+        # [GIVEN]
+        # Correct example of class Hungarian_Algorithm
+        Centre = []
+        Centre.append([random.randint(-10, -5), random.randint(-10, -5)])
+        Centre.append([random.randint(5, 10), random.randint(5, 10)])
+        Capacity = [1, 1]
+        House = []
+        House.append([random.randint(-100, -50), random.randint(-100, -50)])
+        House.append([random.randint(50, 100), random.randint(50, 100)])
     
+        # [WHEN]
+        # Calculate perfect matching
+        G = Algorithm.Hungarian_Algorithm(Centre, Capacity, House)
+        M, _ = G.main_algorithm()   
+        
+        # [THEN]
+        # Perfect matching is calculated 
+        expected_value = [[0,2],[1,3]]
+        msg = 'Wrong result!'
+        self.assertEqual(M, expected_value, msg)
+        
+        
+    def test_hungarian_algorithm_result(self):
+        # [GIVEN]
+        # Correct example of class Hungarian_Algorithm
+        Centre = [[0,0], [1,1]]
+        Capacity = [1, 1]
+        House = [[-3, -4], [4, 5]]
+        
+        # [WHEN]
+        # Calculate distance between houses and centres in perfect matching.
+        G = Algorithm.Hungarian_Algorithm(Centre, Capacity, House)
+        _, Result = G.main_algorithm()
+
+        # [THEN]
+        # Calculate potentials. We know that Centre 1 is closer House 1 and Centre 2 is closer House 2.
+        expected_value = math.sqrt((0+3)**2 + (0+4)**2) + math.sqrt((1-4)**2 + (1-5)**2)
+        msg = 'Wrong result!'
+        self.assertEqual(Result, expected_value, msg)
+        
 if __name__ == '__main__':
     unittest.main()
