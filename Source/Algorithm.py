@@ -37,10 +37,10 @@ class Hungarian_Algorithm:
             raise Exception(text + 'house.')
         
         for i in range(len(centre)):
-            if (not isinstance(centre[i], list)) or (not isinstance(centre[i][0], float)) or (not isinstance(centre[i][1], float)):
+            if (not isinstance(centre[i], list)) or (not (isinstance(centre[i][0], float) or (isinstance(centre[i][0], int)))) or (not (isinstance(centre[i][1], float) or (isinstance(centre[i][1], int)))):
                 raise Exception(text + 'centre.')
         for i in range(len(house)):
-            if (not isinstance(house[i], list)) or (not isinstance(house[i][0], float)) or (not isinstance(house[i][1], float)):
+            if (not isinstance(house[i], list)) or (not (isinstance(house[i][0], float) or (isinstance(house[i][0], int)))) or (not (isinstance(house[i][1], float) or (isinstance(house[i][1], int)))):
                 raise Exception(text + 'house.')
             
         if int(sum(capacity)) != len(house):
@@ -150,7 +150,6 @@ class Hungarian_Algorithm:
             [type]: [description]
         """
         M = []
-        # Centre_iterator = list(range(len(self.centre))) # indeksy centrow
         NoOfHouses = int(len(self.house))
         NoOfCentres = int(len(self.house))
         for i in range(NoOfCentres):
@@ -182,7 +181,6 @@ class Hungarian_Algorithm:
         Centre_Capacity_iterator = list(range(len(self.house))) #centra razy pojemnosc
         House_iterator = list(range(len(self.house)))
         NoOfHouses = int(len(self.house))
-        # na pierwszy rzut oka funkcja wydaje sie byc ok, ale nie testowalem czy wszystko dziala tak jak powinno
         for i in Centre_Capacity_iterator:
             for j in House_iterator:
                 if y[i]+y[j + NoOfHouses] == G[i][j + NoOfHouses]:
@@ -222,16 +220,15 @@ class Hungarian_Algorithm:
         NoOfCentres = int(len(self.centre))
         Y = self.init_potential()
         G_y = np.zeros(((2 * NoOfHouses), (2 * NoOfHouses)))
-       # G_y = self.update_Gy(G, Y, G_y)
+        G_y = self.update_Gy(G, Y, G_y)
         R_C = list(range(NoOfHouses)) # wierzcholki niepokryte przez M
         R_H = list(range(NoOfHouses,2*len(self.house))) # wierzcholki niepokryte przez M
-        Z = list(range(NoOfHouses))
+        Z = []
+        Z = self.update_Z(Z, G_y, R_C, R_H)
         Centre_iterator = list(range(len(self.house))) # indeksy centrow
         House_iterator = list(range(NoOfHouses,2*len(self.house))) # indeksy domow
 
         while len(M) < NoOfHouses:
-            # Mozliwe ze na poczatku trzeba bedzie zaktualizowac G_y (update_Gy) bo potencjaly wybieramy sprytniej 
-            # wiec możliwe ze juz na samym poczatku bedziemy miec ciasne krawedzie
             if len(intersection(R_H, Z)) != 0:
                 G_y = self.reverse_path(G_y, R_C, R_H)
             else:
@@ -312,6 +309,10 @@ def BFS(G, A, B):
                             path.append(parent[temp])
                             temp = parent[temp]
                         return path[::-1]
+                    dist[w ] =dist[u]+1
+                    Q.append(w)
+            colors[u] = 2
+    return []
 
 
 def BFS_vertex(G, v):
