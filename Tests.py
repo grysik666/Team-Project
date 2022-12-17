@@ -1,5 +1,5 @@
 import unittest
-from Source import Algorithm
+import Algorithm
 import math
 import random
 import numpy as np
