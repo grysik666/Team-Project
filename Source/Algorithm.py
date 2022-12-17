@@ -207,8 +207,33 @@ class Hungarian_Algorithm:
                 if (G[i][j] - Y[i] - Y[j]) < delta:
                     delta = G[i][j] - Y[i] - Y[j]
         return delta
+    
+    def print_info(self, M):
+        Centre_Indexes = []
+        Temporary_List = [[] for _ in range(len(self.centre))]
+        NoOfHouses = int(len(self.house))
+        for i in range(len(self.centre)):
+            for _ in range(int(self.capacity[i])):
+                Centre_Indexes.append(i)
+        for i in range(len(M)):
+            Temporary_List[Centre_Indexes[M[i][0]]].append(M[i][1] - NoOfHouses + 1)
+        print('Centre ---> House')
+        for i in range(len(Temporary_List)):
+            print('  ', i+1, '  --->', *Temporary_List[i])
+            
+    def calculate_result(self, M):
+        Result = 0
+        Centre_Indexes = []
+        NoOfHouses = int(len(self.house))
+        for i in range(len(self.centre)):
+            for _ in range(int(self.capacity[i])):
+                Centre_Indexes.append(i)
+        for i in range(len(M)):
+
+            Result += self.distance(self.centre[Centre_Indexes[int(M[i][0])]], self.house[int(M[i][1]) - NoOfHouses])
+        return Result
         
-    def main_algorithm(self):
+    def main_algorithm(self, print_info = False):
         """[Main Hungarian algorithm]
 
         Returns:
@@ -245,7 +270,10 @@ class Hungarian_Algorithm:
             R_C = self.update_R(R_C, M, True)
             R_H = self.update_R(R_H, M, False)
             Z = self.update_Z(Z, G_y, R_C, R_H)
-        return M
+        if print_info:
+            self.print_info(M)
+        Result = self.calculate_result(M)
+        return M, Result
                 
                 
 def intersection(list1, list2):
