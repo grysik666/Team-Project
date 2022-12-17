@@ -118,7 +118,6 @@ class Hungarian_Algorithm:
         Returns:
             [list]: [Updated list R.]
         """
-        # copy()
         if IsCentre:
             i = 0
         else:
@@ -169,7 +168,7 @@ class Hungarian_Algorithm:
             temp = BFS_vertex(G_y,vertex) 
             for w in temp:
                 if w not in Z:
-                    Z.append(w) # Trzeba bedzie jakos sprytnie rozrozniac ktore wierzcholki to centra a ktore to domy, ale to dopiero po implementacji BFS'a
+                    Z.append(w)
         return Z
     
     def update_Gy(self, G, y, G_y):
