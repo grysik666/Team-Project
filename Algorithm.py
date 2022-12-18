@@ -58,7 +58,7 @@ class Hungarian_Algorithm:
         Returns:
             [float]: [Distance from distribution centre to house.]
         """
-        return math.sqrt((centre[0] - house[0]) ** 2 + (centre[1] - house[1]) ** 2)
+        return round(math.sqrt((centre[0] - house[0]) ** 2 + (centre[1] - house[1]) ** 2), 2)
 
     def calculate_adjency_matrix(self):
         """[Function which makes matrix of distances from every distribution centre to every house.]
@@ -139,7 +139,7 @@ class Hungarian_Algorithm:
         for i in range(len(path) - 1):
             temp = G_y[path[i]][path[i + 1]]
             G_y[path[i]][path[i + 1]] = 0
-            G_y[path[i + 1]][path[i]] = temp
+            G_y[path[i + 1]][path[i]] = round(temp, 2)
         return G_y
 
     def update_M(self, M, G_y):
@@ -182,11 +182,11 @@ class Hungarian_Algorithm:
         NoOfHouses = int(len(self.house))
         for i in Centre_Capacity_iterator:
             for j in House_iterator:
-                if y[i]+y[j + NoOfHouses] == G[i][j + NoOfHouses]:
-                    if G_y[i][j + NoOfHouses] != G[i][j + NoOfHouses] and G_y[j + NoOfHouses][i] != G[i][j + NoOfHouses]:
-                        G_y[i][j + NoOfHouses] = G[i][j + NoOfHouses]
+                if round(y[i]+y[j + NoOfHouses],2) == round(G[i][j + NoOfHouses], 2):
+                    if round(G_y[i][j + NoOfHouses], 2) != round(G[i][j + NoOfHouses], 2) and round(G_y[j + NoOfHouses][i], 2) != round(G[i][j + NoOfHouses], 2):
+                        G_y[i][j + NoOfHouses] = round(G[i][j + NoOfHouses], 2)
                 else:
-                    if G_y[i][j + NoOfHouses] == G[i][j + NoOfHouses] or G_y[j + NoOfHouses][i] == G[i][j + NoOfHouses]:
+                    if round(G_y[i][j + NoOfHouses], 2) == round(G[i][j + NoOfHouses], 2) or round(G_y[j + NoOfHouses][i], 2) == round(G[i][j + NoOfHouses], 2):
                         G_y[i][j + NoOfHouses] = 0
                         G_y[j + NoOfHouses][i] = 0    
         return G_y    
@@ -205,7 +205,7 @@ class Hungarian_Algorithm:
             for j in H_minus_Z:
                 if (G[i][j] - Y[i] - Y[j]) < delta:
                     delta = G[i][j] - Y[i] - Y[j]
-        return delta
+        return round(delta, 2)
     
     def print_info(self, M):
         Centre_Indexes = []
