@@ -2,6 +2,9 @@ from PyQt5.QtWidgets import QApplication, QWidget
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QLabel, QGridLayout
 from PyQt5.QtWidgets import QLineEdit, QPushButton, QVBoxLayout, QFileDialog
+import Algorithm
+import random
+import time
 
 
 class Application(QWidget):
@@ -37,10 +40,33 @@ class Application(QWidget):
         
         layoutT.addLayout(layoutH, 0, 0, 1, 3)
         exit_Button.clicked.connect(self.finish)
+        random_values.clicked.connect(self.random_values)
         own_values.clicked.connect(self.open_file)
-        
+          
     def open_file(self):
-        fname, _ = QFileDialog.getOpenFileName(self, "Otwórz plik", "", "Wszystkie pliki (*);; Plik tekstowy (*.txt)")
+        path, _ = QFileDialog.getOpenFileName(self, "Otwórz plik", "", "Wszystkie pliki (*);; Plik tekstowy (*.txt)")
+        Centre, Capacity, House = Algorithm.load_from_file(path)
+        G = Algorithm.Hungarian_Algorithm(Centre, Capacity, House)
+        M,Result = G.main_algorithm(True)
+
+        
+    def random_values(self):
+        Centre = []
+        Capacity = []
+        House = []
+        label = '*'*50
+        for _ in range(10):
+            Centre.append([random.randint(-100,100), random.randint(-100,100)])
+            Capacity.append(random.randint(1,10))
+        for _ in range(sum(Capacity)):
+            House.append([random.randint(-100,100), random.randint(-100,100)])
+        G = Algorithm.Hungarian_Algorithm(Centre, Capacity, House)
+        NoOfHouses = int(len(House))
+        NoOfCentres = int(len(Centre))
+        StartTime = time.time()
+        G.main_algorithm(True)
+        StopTime = time.time()
+        print(label, '\nCalculation time for ', NoOfHouses, 'houses and ', NoOfCentres, 'centres was ', round(StopTime - StartTime, 5), 's.\n', label)
 
     def finish(self):
         self.close()
