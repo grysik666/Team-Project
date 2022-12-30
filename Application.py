@@ -1,7 +1,6 @@
-from PyQt5.QtWidgets import QApplication, QWidget
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QLabel, QGridLayout
-from PyQt5.QtWidgets import QLineEdit, QPushButton, QVBoxLayout, QFileDialog
+from PyQt5.QtWidgets import QApplication, QMessageBox, QWidget
+from PyQt5.QtWidgets import QGridLayout
+from PyQt5.QtWidgets import QPushButton, QVBoxLayout, QFileDialog
 import Algorithm
 import random
 import time
@@ -47,25 +46,28 @@ class Application(QWidget):
         path, _ = QFileDialog.getOpenFileName(self, "Otwórz plik", "", "Wszystkie pliki (*);; Plik tekstowy (*.txt)")
         Centre, Capacity, House = Algorithm.load_from_file(path)
         G = Algorithm.Hungarian_Algorithm(Centre, Capacity, House)
-        M,Result = G.main_algorithm(True)
-
+        _, Result, StringResult = G.main_algorithm(True)
+        StrResult = 'Łączna odległość pomiędzy połączonymi centrami i domami wynosi ' + str(round(Result, 2))
+        QMessageBox.information(self, 'tytul', StrResult + '\n' + StringResult)
         
     def random_values(self):
         Centre = []
         Capacity = []
         House = []
         label = '*'*50
-        for _ in range(10):
+        for _ in range(20):
             Centre.append([random.randint(-100,100), random.randint(-100,100)])
-            Capacity.append(random.randint(1,10))
+            Capacity.append(random.randint(1,5))
         for _ in range(sum(Capacity)):
             House.append([random.randint(-100,100), random.randint(-100,100)])
         G = Algorithm.Hungarian_Algorithm(Centre, Capacity, House)
         NoOfHouses = int(len(House))
         NoOfCentres = int(len(Centre))
         StartTime = time.time()
-        G.main_algorithm(True)
+        _, Result, StringResult = G.main_algorithm(True)
         StopTime = time.time()
+        StrResult = 'Łączna odległość pomiędzy połączonymi centrami i domami wynosi ' + str(round(Result, 2))
+        QMessageBox.information(self, 'tytul', StrResult + '\n' + StringResult)
         print(label, '\nCalculation time for ', NoOfHouses, 'houses and ', NoOfCentres, 'centres was ', round(StopTime - StartTime, 5), 's.\n', label)
 
     def finish(self):

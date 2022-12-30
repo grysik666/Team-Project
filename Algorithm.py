@@ -208,6 +208,7 @@ class Hungarian_Algorithm:
         return round(delta, 2)
     
     def print_info(self, M):
+        StringResult =''
         Centre_Indexes = []
         Temporary_List = [[] for _ in range(len(self.centre))]
         NoOfHouses = int(len(self.house))
@@ -217,8 +218,11 @@ class Hungarian_Algorithm:
         for i in range(len(M)):
             Temporary_List[Centre_Indexes[M[i][0]]].append(M[i][1] - NoOfHouses + 1)
         print('Centre ---> House')
+        StringResult += 'Centrum ---> Dom\n'
         for i in range(len(Temporary_List)):
             print('  ', i+1, '  --->', *Temporary_List[i])
+            StringResult += '  ' + str(i+1) + '  --->' + str(Temporary_List[i]) + '\n'
+        return StringResult
             
     def calculate_result(self, M):
         Result = 0
@@ -239,6 +243,7 @@ class Hungarian_Algorithm:
             [list]: [Perfect matching in graph containing distribution centres and houses.]
         """
         M = []
+        StringResult = ''
         G = self.generate_bipartite_graph()
         NoOfHouses = int(len(self.house))
         NoOfCentres = int(len(self.centre))
@@ -270,9 +275,9 @@ class Hungarian_Algorithm:
             R_H = self.update_R(R_H, M, False)
             Z = self.update_Z(Z, G_y, R_C, R_H)
         if print_info:
-            self.print_info(M)
+            StringResult = self.print_info(M)
         Result = self.calculate_result(M)
-        return M, Result
+        return M, Result, StringResult
                 
                 
 def intersection(list1, list2):
