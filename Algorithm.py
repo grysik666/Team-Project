@@ -143,10 +143,10 @@ class Hungarian_Algorithm:
         return G_y
 
     def update_M(self, M, G_y):
-        """[summary]
+        """[Function adds edges from graph G_y to perfect matching M]
 
         Returns:
-            [type]: [description]
+            [list]: [List of pairs - first coordinate centre number, second coordinate house number]
         """
         M = []
         NoOfHouses = int(len(self.house))
@@ -158,10 +158,10 @@ class Hungarian_Algorithm:
         return M
     
     def update_Z(self, Z, G_y, R_C, R_H):
-        """[summary]
+        """[Function updates set Z at vertices from updated graph G_y which are joined with graph R_C]
 
         Returns:
-            [type]: [description]
+            [list]: [List of vertices]
         """
         Z = R_C.copy()
         for vertex in R_C:
@@ -172,10 +172,10 @@ class Hungarian_Algorithm:
         return Z
     
     def update_Gy(self, G, y, G_y):
-        """[summary]
+        """[Function updates graph G_y at tight edges]
 
         Returns:
-            [type]: [description]
+            [matrix]: [Matrix distances between two vertices]
         """
         Centre_Capacity_iterator = list(range(len(self.house))) #centra razy pojemnosc
         House_iterator = list(range(len(self.house)))
