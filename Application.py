@@ -1,11 +1,24 @@
-from PyQt5.QtWidgets import QApplication, QMessageBox, QWidget
-from PyQt5.QtWidgets import QGridLayout
+from PyQt5.QtWidgets import QApplication, QMessageBox, QWidget, QScrollArea
+from PyQt5.QtWidgets import QGridLayout, QLabel
 from PyQt5.QtWidgets import QPushButton, QVBoxLayout, QFileDialog
 import Algorithm
 import random
 import time
 
-
+class ScrollMessageBox(QMessageBox):
+   def __init__(self, l, *args, **kwargs):
+      QMessageBox.__init__(self, *args, **kwargs)
+      scroll = QScrollArea(self)
+      scroll.setWidgetResizable(True)
+      self.content = QWidget()
+      self.setGeometry(800, 300, 250, 250)
+      scroll.setWidget(self.content)
+      lay = QVBoxLayout(self.content)
+      for item in l:
+         lay.addWidget(QLabel(item, self))
+      self.layout().addWidget(scroll, 0, 0, 1, self.layout().columnCount())
+      self.setStyleSheet("QScrollArea")
+      
 class Application(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -17,7 +30,6 @@ class Application(QWidget):
         self.resize(200, 200)
         self.setWindowTitle("Aplikacja")
         layoutT = QGridLayout()
-
         self.setLayout(layoutT)
         self.setGeometry(800, 300, 250, 250)
         self.setWindowTitle("Aplikacja")
@@ -40,6 +52,7 @@ class Application(QWidget):
         layoutT.addLayout(layoutH, 0, 0, 1, 3)
         exit_Button.clicked.connect(self.finish)
         random_values.clicked.connect(self.random_values)
+        #random_values_by_user.clicked.connect(self.random_values_generated_by_user)
         own_values.clicked.connect(self.open_file)
           
     def open_file(self):
@@ -48,16 +61,16 @@ class Application(QWidget):
         G = Algorithm.Hungarian_Algorithm(Centre, Capacity, House)
         _, Result, StringResult = G.main_algorithm(True)
         StrResult = 'Łączna odległość pomiędzy połączonymi centrami i domami wynosi ' + str(round(Result, 2))
-        QMessageBox.information(self, 'tytul', StrResult + '\n' + StringResult)
+        Box = QMessageBox.information(self, 'Wynik', StrResult + '\n' + StringResult)
         
     def random_values(self):
         Centre = []
         Capacity = []
         House = []
         label = '*'*50
-        for _ in range(20):
+        for _ in range(35):
             Centre.append([random.randint(-100,100), random.randint(-100,100)])
-            Capacity.append(random.randint(1,5))
+            Capacity.append(random.randint(1,1))
         for _ in range(sum(Capacity)):
             House.append([random.randint(-100,100), random.randint(-100,100)])
         G = Algorithm.Hungarian_Algorithm(Centre, Capacity, House)
@@ -67,7 +80,7 @@ class Application(QWidget):
         _, Result, StringResult = G.main_algorithm(True)
         StopTime = time.time()
         StrResult = 'Łączna odległość pomiędzy połączonymi centrami i domami wynosi ' + str(round(Result, 2))
-        QMessageBox.information(self, 'tytul', StrResult + '\n' + StringResult)
+        lst = QMessageBox.information(self, 'tytul', StrResult + '\n' + StringResult)
         print(label, '\nCalculation time for ', NoOfHouses, 'houses and ', NoOfCentres, 'centres was ', round(StopTime - StartTime, 5), 's.\n', label)
 
     def finish(self):
