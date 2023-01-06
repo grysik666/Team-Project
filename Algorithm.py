@@ -48,7 +48,7 @@ class Hungarian_Algorithm:
         if len(capacity) != len(centre):
             raise Exception("No. of centres doesn't match the capacity.")
 
-    def distance(self, centre: list, house: list):
+    def distance(self, Centre: list, House: list):
         """[Function which calculates distance from distribution centre to house.]
 
         Args:
@@ -58,7 +58,7 @@ class Hungarian_Algorithm:
         Returns:
             [float]: [Distance from distribution centre to house.]
         """
-        return round(math.sqrt((centre[0] - house[0]) ** 2 + (centre[1] - house[1]) ** 2), 2)
+        return round(math.sqrt((Centre[0] - House[0]) ** 2 + (Centre[1] - House[1]) ** 2), 2)
 
     def calculate_adjency_matrix(self):
         """[Function which makes matrix of distances from every distribution centre to every house.]
