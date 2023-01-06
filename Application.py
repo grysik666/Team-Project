@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QApplication, QMessageBox, QWidget, QScrollArea
 from PyQt5.QtWidgets import QGridLayout, QLabel
 from PyQt5.QtWidgets import QPushButton, QVBoxLayout, QFileDialog
 import Algorithm
+import Graph
 import random
 import time
 
@@ -16,7 +17,7 @@ class ScrollMessageBox(QMessageBox):
       lay = QVBoxLayout(self.content)
       for item in l:
          lay.addWidget(QLabel(item, self))
-      self.layout().addWidget(scroll, 0, 0, 1, self.layout().columnCount())
+    #   self.layout().addWidget(scroll, 0, 0, 1, self.layout().columnCount())
       self.setStyleSheet("QScrollArea")
       
 class Application(QWidget):
@@ -59,28 +60,32 @@ class Application(QWidget):
         path, _ = QFileDialog.getOpenFileName(self, "Otwórz plik", "", "Wszystkie pliki (*);; Plik tekstowy (*.txt)")
         Centre, Capacity, House = Algorithm.load_from_file(path)
         G = Algorithm.Hungarian_Algorithm(Centre, Capacity, House)
-        _, Result, StringResult = G.main_algorithm(True)
+        M, Result, StringResult = G.main_algorithm(True)
         StrResult = 'Łączna odległość pomiędzy połączonymi centrami i domami wynosi ' + str(round(Result, 2))
         Box = QMessageBox.information(self, 'Wynik', StrResult + '\n' + StringResult)
+        G = Graph.Graphs()
+        G.plot_graph(Centre, Capacity, House, M)
         
     def random_values(self):
         Centre = []
         Capacity = []
         House = []
         label = '*'*50
-        for _ in range(35):
-            Centre.append([random.randint(-100,100), random.randint(-100,100)])
-            Capacity.append(random.randint(1,1))
+        for _ in range(5):
+            Centre.append([random.random()*4 + 49.8, random.random()*8.5 + 14.8])
+            Capacity.append(random.randint(5,25))
         for _ in range(sum(Capacity)):
-            House.append([random.randint(-100,100), random.randint(-100,100)])
+            House.append([random.random()*4.4 + 49.9, random.random()*9 + 14.65])
         G = Algorithm.Hungarian_Algorithm(Centre, Capacity, House)
         NoOfHouses = int(len(House))
         NoOfCentres = int(len(Centre))
         StartTime = time.time()
-        _, Result, StringResult = G.main_algorithm(True)
+        M, Result, StringResult = G.main_algorithm(True)
         StopTime = time.time()
         StrResult = 'Łączna odległość pomiędzy połączonymi centrami i domami wynosi ' + str(round(Result, 2))
         lst = QMessageBox.information(self, 'tytul', StrResult + '\n' + StringResult)
+        G = Graph.Graphs()
+        G.plot_graph(Centre, Capacity, House, M)
         print(label, '\nCalculation time for ', NoOfHouses, 'houses and ', NoOfCentres, 'centres was ', round(StopTime - StartTime, 5), 's.\n', label)
 
     def finish(self):
