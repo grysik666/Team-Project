@@ -44,9 +44,9 @@ class Hungarian_Algorithm:
                 raise Exception(text + 'house.')
             
         if int(sum(capacity)) != len(house):
-            raise Exception('No. of houses doesn\'t match the capacity.')
+            raise Exception("No. of houses doesn't match the capacity.")
         if len(capacity) != len(centre):
-            raise Exception('No. of centres doesn\'t match the capacity.')
+            raise Exception("No. of centres doesn't match the capacity.")
 
     def distance(self, centre: list, house: list):
         """[Function which calculates distance from distribution centre to house.]
