@@ -14,7 +14,7 @@ class Graphs:
         return Temporary_List
             
     def plot_graph(self, Centre, Capacity, House, M):
-        colors = ['aqua', 'brown', 'darkblue', 'gold', 'olive', 'orange', 'yellow', 'white']
+        colors = ['aqua', 'green', 'darkblue', 'gold', 'red', 'orange', 'yellow', 'white']
         ListOfHouses = Graphs.modify_data(self, Centre, Capacity, House, M)
         fig = go.Figure(go.Scattermapbox())
         for i in range(len(ListOfHouses)):
@@ -23,7 +23,7 @@ class Graphs:
                     mode = "markers+text+lines",
                     lon = [Centre[i][1], House[ListOfHouses[i][j] - 1][1]],
                     lat = [Centre[i][0], House[ListOfHouses[i][j] - 1][0]],
-                    line = {'color': colors[i % len(ListOfHouses)], 'width': 3},
+                    line = {'color': colors[i % len(colors)], 'width': 3},
                     text = ["Centre", "House"],textposition = "bottom right",
                     marker = {'size': 12}))
 
