@@ -58,7 +58,7 @@ class Hungarian_Algorithm:
         Returns:
             [float]: [Distance from distribution centre to house.]
         """
-        return round(math.sqrt((Centre[0] - House[0]) ** 2 + (Centre[1] - House[1]) ** 2), 2)
+        return round(math.sqrt((Centre[0] - House[0]) ** 2 + (Centre[1] - House[1]) ** 2), 3)
 
     def calculate_adjency_matrix(self):
         """[Function which makes matrix of distances from every distribution centre to every house.]
@@ -139,7 +139,7 @@ class Hungarian_Algorithm:
         for i in range(len(path) - 1):
             temp = G_y[path[i]][path[i + 1]]
             G_y[path[i]][path[i + 1]] = 0
-            G_y[path[i + 1]][path[i]] = round(temp, 2)
+            G_y[path[i + 1]][path[i]] = round(temp, 3)
         return G_y
 
     def update_M(self, M, G_y):
@@ -182,11 +182,11 @@ class Hungarian_Algorithm:
         NoOfHouses = int(len(self.house))
         for i in Centre_Capacity_iterator:
             for j in House_iterator:
-                if round(y[i]+y[j + NoOfHouses],2) == round(G[i][j + NoOfHouses], 2):
-                    if round(G_y[i][j + NoOfHouses], 2) != round(G[i][j + NoOfHouses], 2) and round(G_y[j + NoOfHouses][i], 2) != round(G[i][j + NoOfHouses], 2):
-                        G_y[i][j + NoOfHouses] = round(G[i][j + NoOfHouses], 2)
+                if round(y[i]+y[j + NoOfHouses], 3) == round(G[i][j + NoOfHouses], 3):
+                    if round(G_y[i][j + NoOfHouses], 3) != round(G[i][j + NoOfHouses], 3) and round(G_y[j + NoOfHouses][i], 3) != round(G[i][j + NoOfHouses], 3):
+                        G_y[i][j + NoOfHouses] = round(G[i][j + NoOfHouses], 3)
                 else:
-                    if round(G_y[i][j + NoOfHouses], 2) == round(G[i][j + NoOfHouses], 2) or round(G_y[j + NoOfHouses][i], 2) == round(G[i][j + NoOfHouses], 2):
+                    if round(G_y[i][j + NoOfHouses], 3) == round(G[i][j + NoOfHouses], 3) or round(G_y[j + NoOfHouses][i], 3) == round(G[i][j + NoOfHouses], 3):
                         G_y[i][j + NoOfHouses] = 0
                         G_y[j + NoOfHouses][i] = 0    
         return G_y    
@@ -205,7 +205,7 @@ class Hungarian_Algorithm:
             for j in H_minus_Z:
                 if (G[i][j] - Y[i] - Y[j]) < delta:
                     delta = G[i][j] - Y[i] - Y[j]
-        return round(delta, 2)
+        return round(delta, 3)
     
     def print_info(self, M):
         StringResult =''
