@@ -73,9 +73,9 @@ class Application(QWidget):
         label = '*'*50
         for _ in range(5):
             Centre.append([random.random()*4 + 49.8, random.random()*8.5 + 14.8])
-            Capacity.append(random.randint(5,25))
+            Capacity.append(random.randint(10,25))
         for _ in range(sum(Capacity)):
-            House.append([random.random()*4.4 + 49.9, random.random()*9 + 14.65])
+            House.append([random.random()*4.2 + 50.05, random.random()*8.8 + 14.75])
         G = Algorithm.Hungarian_Algorithm(Centre, Capacity, House)
         NoOfHouses = int(len(House))
         NoOfCentres = int(len(Centre))
