@@ -32,6 +32,6 @@ class Graphs:
             mapbox = {
                 'center': {'lon': 19, 'lat': 52},
                 'style': "stamen-terrain",
-                'zoom': 5.5})
+                'zoom': 5.38})
 
         fig.show()
