@@ -61,7 +61,7 @@ class Application(QWidget):
         Centre, Capacity, House = Algorithm.load_from_file(path)
         G = Algorithm.Hungarian_Algorithm(Centre, Capacity, House)
         M, Result, StringResult = G.main_algorithm(True)
-        StrResult = 'Łączna odległość pomiędzy połączonymi centrami i domami wynosi ' + str(round(Result, 2))
+        StrResult = 'Łączna odległość pomiędzy połączonymi centrami i domami wynosi ' + str(round(Result, 3)) + ' km'
         Box = QMessageBox.information(self, 'Wynik', StrResult + '\n' + StringResult)
         G = Graph.Graphs()
         G.plot_graph(Centre, Capacity, House, M)
@@ -82,7 +82,7 @@ class Application(QWidget):
         StartTime = time.time()
         M, Result, StringResult = G.main_algorithm(True)
         StopTime = time.time()
-        StrResult = 'Łączna odległość pomiędzy połączonymi centrami i domami wynosi ' + str(round(Result, 2))
+        StrResult = 'Łączna odległość pomiędzy połączonymi centrami i domami wynosi ' + str(round(Result, 3)) + ' km'
         lst = QMessageBox.information(self, 'tytul', StrResult + '\n' + StringResult)
         G = Graph.Graphs()
         G.plot_graph(Centre, Capacity, House, M)

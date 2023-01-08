@@ -58,7 +58,7 @@ class Hungarian_Algorithm:
         Returns:
             [float]: [Distance from distribution centre to house.]
         """
-        return round(math.sqrt((Centre[0] - House[0]) ** 2 + (Centre[1] - House[1]) ** 2), 3)
+        return round(math.sqrt((Centre[0] - House[0]) ** 2 + (math.cos((House[0] * math.pi) / 180) * (Centre[1] - House[1])) ** 2) * (40075.704 / 360), 3)
 
     def calculate_adjency_matrix(self):
         """[Function which makes matrix of distances from every distribution centre to every house.]
