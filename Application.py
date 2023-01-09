@@ -4,7 +4,6 @@ from PyQt5.QtWidgets import QPushButton, QVBoxLayout, QFileDialog
 import Algorithm
 import Graph
 import random
-import time
 
 class ScrollMessageBox(QMessageBox):
    def __init__(self, *args, **kwargs):
@@ -16,8 +15,8 @@ class ScrollMessageBox(QMessageBox):
       lbl = QLabel(chldn[1].text(), self)
       lbl.setWordWrap(True)
       scrll.setWidget(lbl)
-      scrll.setMinimumSize (600,150)
-      #scrll.setWidgetResizable(True)
+      scrll.setMinimumSize (680,250)
+      scrll.setWidgetResizable(True)
       grd.addWidget(scrll,0,1)
       chldn[1].setText('')
       self.exec_()
@@ -25,7 +24,6 @@ class ScrollMessageBox(QMessageBox):
 class Application(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-
         self.interface()
         
     def interface(self):
@@ -39,12 +37,9 @@ class Application(QWidget):
         self.show()
         # przyciski
         own_values = QPushButton("Własne parametry", self)
-        #own_values.resize(own_values.sizeHint())
         random_values = QPushButton("Losowe wartosci", self)
         random_values_by_user = QPushButton("Podaj przykładowe wartosci", self)
-        #random_values.resize(random_values.sizeHint())
         exit_Button = QPushButton("Koniec", self)
-        #exit_Button.resize(exit_Button.sizeHint())
         
         layoutH = QVBoxLayout()
         layoutH.addWidget(own_values)
@@ -64,7 +59,7 @@ class Application(QWidget):
         G = Algorithm.Hungarian_Algorithm(Centre, Capacity, House)
         M, Result, StringResult = G.main_algorithm(True)
         StrResult = 'Łączna odległość pomiędzy połączonymi centrami i domami wynosi ' + str(round(Result, 3)) + ' km'
-        Box = QMessageBox.information(self, 'Wynik', StrResult + '\n' + StringResult)
+        ScrollMessageBox(1 , "Wynik", StrResult + '\n' + StringResult)
         G = Graph.Graphs()
         G.plot_graph(Centre, Capacity, House, M)
         
@@ -79,16 +74,11 @@ class Application(QWidget):
         for _ in range(sum(Capacity)):
             House.append([random.random()*4.2 + 50.05, random.random()*8.8 + 14.75])
         G = Algorithm.Hungarian_Algorithm(Centre, Capacity, House)
-        NoOfHouses = int(len(House))
-        NoOfCentres = int(len(Centre))
-        StartTime = time.time()
         M, Result, StringResult = G.main_algorithm(True)
-        StopTime = time.time()
         StrResult = 'Łączna odległość pomiędzy połączonymi centrami i domami wynosi ' + str(round(Result, 3)) + ' km'
-        Box = ScrollMessageBox(QMessageBox.Information , "Wynik", StrResult + '\n' + StringResult)
+        ScrollMessageBox(1 , "Wynik", StrResult + '\n' + StringResult)
         G = Graph.Graphs()
         G.plot_graph(Centre, Capacity, House, M)
-        #print(label, '\nCalculation time for ', NoOfHouses, 'houses and ', NoOfCentres, 'centres was ', round(StopTime - StartTime, 5), 's.\n', label)
 
     def finish(self):
         self.close()
