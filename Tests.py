@@ -52,7 +52,7 @@ class HungarianAlgorithmTestCase(unittest.TestCase):
         
         # [THEN]
         # Distance between two points is calculated
-        expected_value = math.sqrt(4**2 + 3**2)
+        expected_value = round(math.sqrt((-4)**2 + ((math.cos((4 * math.pi) / 180)) * 3 ) ** 2) * (40075.704 / 360), 3)
         msg = 'Wrong result!'
         self.assertEqual(result, expected_value, msg)
 
@@ -67,10 +67,10 @@ class HungarianAlgorithmTestCase(unittest.TestCase):
         # [WHEN]
         # Calculate Hungarian Algorithm 
         G = Algorithm.Hungarian_Algorithm(centre, capacity, house)
-        _, Result = G.main_algorithm()
+        _, Result, _ = G.main_algorithm()
         # [THEN]
         # Calculate perfect matching.
-        expected_value = 10.0
+        expected_value = round(math.sqrt((-4)**2 + ((math.cos((4 * math.pi) / 180)) * 3 ) ** 2) * (40075.704 / 360), 3) * 2
         msg = 'Wrong result!'
         self.assertEqual(Result, expected_value, msg)
     
@@ -89,7 +89,7 @@ class HungarianAlgorithmTestCase(unittest.TestCase):
 
         # [THEN]
         # Calculate potentials. We know that Centre 1 is closer House 1 and Centre 2 is closer House 2.
-        expected_value = np.array([0., 0., math.sqrt(3**2 + 4**2), math.sqrt((4 - 1)**2 + (5 - 1)**2)])
+        expected_value = np.array([0., 0., round(math.sqrt((-4)**2 + ((math.cos((4 * math.pi) / 180)) * 3 ) ** 2) * (40075.704 / 360), 3), round(math.sqrt((-3)**2 + ((math.cos((4 * math.pi) / 180)) * 4 ) ** 2) * (40075.704 / 360), 3)])
         msg = 'Wrong result!'
         self.assertEqual(Result.tolist(), expected_value.tolist(), msg)
 
@@ -156,7 +156,7 @@ class HungarianAlgorithmTestCase(unittest.TestCase):
         # [WHEN]
         # Calculate perfect matching
         G = Algorithm.Hungarian_Algorithm(Centre, Capacity, House)
-        M, _ = G.main_algorithm()
+        M, _, _ = G.main_algorithm()
 
         # [THEN]
         # Perfect matching is calculated 
@@ -179,7 +179,7 @@ class HungarianAlgorithmTestCase(unittest.TestCase):
         # [WHEN]
         # Calculate perfect matching
         G = Algorithm.Hungarian_Algorithm(Centre, Capacity, House)
-        M, _ = G.main_algorithm()   
+        M, _, _ = G.main_algorithm()   
         
         # [THEN]
         # Perfect matching is calculated 
@@ -198,11 +198,11 @@ class HungarianAlgorithmTestCase(unittest.TestCase):
         # [WHEN]
         # Calculate distance between houses and centres in perfect matching.
         G = Algorithm.Hungarian_Algorithm(Centre, Capacity, House)
-        _, Result = G.main_algorithm()
+        _, Result, _ = G.main_algorithm()
 
         # [THEN]
         # Calculate potentials. We know that Centre 1 is closer House 1 and Centre 2 is closer House 2.
-        expected_value = math.sqrt((0+3)**2 + (0+4)**2) + math.sqrt((1-4)**2 + (1-5)**2)
+        expected_value = round(math.sqrt((-4)**2 + ((math.cos((4 * math.pi) / 180)) * 3 ) ** 2) * (40075.704 / 360), 3) + round(math.sqrt((-3)**2 + ((math.cos((4 * math.pi) / 180)) * 4 ) ** 2) * (40075.704 / 360), 3)
         msg = 'Wrong result!'
         self.assertEqual(Result, expected_value, msg)
         
