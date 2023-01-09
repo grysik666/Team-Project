@@ -212,16 +212,17 @@ class Hungarian_Algorithm:
         Centre_Indexes = []
         Temporary_List = [[] for _ in range(len(self.centre))]
         NoOfHouses = int(len(self.house))
+        ResultsPerCentre = self.calculate_result_per_centre(M)
         for i in range(len(self.centre)):
             for _ in range(int(self.capacity[i])):
                 Centre_Indexes.append(i)
         for i in range(len(M)):
             Temporary_List[Centre_Indexes[M[i][0]]].append(M[i][1] - NoOfHouses + 1)
         print('Centre ---> House')
-        StringResult += 'Centrum ---> Dom\n'
+        StringResult += 'Centrum ---> Dom (Dystans do pokonania)\n'
         for i in range(len(Temporary_List)):
             print('  ', i+1, '  --->', *Temporary_List[i])
-            StringResult += '  ' + str(i+1) + '  --->' + str(Temporary_List[i]) + '\n'
+            StringResult += '  ' + str(i+1) + '  --->' + str(Temporary_List[i]) + ' (' + str(ResultsPerCentre[i]) + ' km) ' + '\n'
         return StringResult
             
     def calculate_result(self, M):
@@ -235,6 +236,19 @@ class Hungarian_Algorithm:
 
             Result += self.distance(self.centre[Centre_Indexes[int(M[i][0])]], self.house[int(M[i][1]) - NoOfHouses])
         return Result
+    
+    def calculate_result_per_centre(self, M):
+        Centre_Indexes = []
+        NoOfHouses = int(len(self.house))
+        for i in range(len(self.centre)):
+            for _ in range(int(self.capacity[i])):
+                Centre_Indexes.append(i)
+        Result = [0. for _ in range(len(Centre_Indexes))]
+        for i in range(len(M)):
+            Result[Centre_Indexes[int(M[i][0])]] += round(self.distance(self.centre[Centre_Indexes[int(M[i][0])]], self.house[int(M[i][1]) - NoOfHouses]), 3)
+        for i in range(len(Result)):
+            Result[i] = round(Result[i], 3)
+        return Result
         
     def main_algorithm(self, print_info = False):
         """[Main Hungarian algorithm]
@@ -246,7 +260,6 @@ class Hungarian_Algorithm:
         StringResult = ''
         G = self.generate_bipartite_graph()
         NoOfHouses = int(len(self.house))
-        NoOfCentres = int(len(self.centre))
         Y = self.init_potential()
         G_y = np.zeros(((2 * NoOfHouses), (2 * NoOfHouses)))
         G_y = self.update_Gy(G, Y, G_y)
