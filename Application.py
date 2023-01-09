@@ -7,18 +7,20 @@ import random
 import time
 
 class ScrollMessageBox(QMessageBox):
-   def __init__(self, l, *args, **kwargs):
+   def __init__(self, *args, **kwargs):
       QMessageBox.__init__(self, *args, **kwargs)
-      scroll = QScrollArea(self)
-      scroll.setWidgetResizable(True)
-      self.content = QWidget()
-      self.setGeometry(800, 300, 250, 250)
-      scroll.setWidget(self.content)
-      lay = QVBoxLayout(self.content)
-      for item in l:
-         lay.addWidget(QLabel(item, self))
-    #   self.layout().addWidget(scroll, 0, 0, 1, self.layout().columnCount())
-      self.setStyleSheet("QScrollArea")
+      chldn = self.children()
+      scrll = QScrollArea(self)
+      scrll.setWidgetResizable(True)
+      grd = self.findChild(QGridLayout)
+      lbl = QLabel(chldn[1].text(), self)
+      lbl.setWordWrap(True)
+      scrll.setWidget(lbl)
+      scrll.setMinimumSize (600,150)
+      #scrll.setWidgetResizable(True)
+      grd.addWidget(scrll,0,1)
+      chldn[1].setText('')
+      self.exec_()
       
 class Application(QWidget):
     def __init__(self, parent=None):
@@ -83,10 +85,10 @@ class Application(QWidget):
         M, Result, StringResult = G.main_algorithm(True)
         StopTime = time.time()
         StrResult = 'Łączna odległość pomiędzy połączonymi centrami i domami wynosi ' + str(round(Result, 3)) + ' km'
-        lst = QMessageBox.information(self, 'tytul', StrResult + '\n' + StringResult)
+        Box = ScrollMessageBox(QMessageBox.Information , "Wynik", StrResult + '\n' + StringResult)
         G = Graph.Graphs()
         G.plot_graph(Centre, Capacity, House, M)
-        print(label, '\nCalculation time for ', NoOfHouses, 'houses and ', NoOfCentres, 'centres was ', round(StopTime - StartTime, 5), 's.\n', label)
+        #print(label, '\nCalculation time for ', NoOfHouses, 'houses and ', NoOfCentres, 'centres was ', round(StopTime - StartTime, 5), 's.\n', label)
 
     def finish(self):
         self.close()
