@@ -108,7 +108,7 @@ class Application(QWidget):
         for j in range(0, len(House) - 1, 2):
             house.append([House[j], House[j + 1]])
             
-        if len(Centre) != len(Capacity) or sum(Capacity) != len(House):
+        if len(centre) != len(capacity) or sum(capacity) != len(house):
             exit()
         G = Algorithm.Hungarian_Algorithm(centre, capacity, house)
         M, Result, StringResult = G.main_algorithm(True)
@@ -126,8 +126,6 @@ class Application(QWidget):
         sys.exit(app.exec_())
 
 if __name__ == '__main__':
-    import sys
-
     app = QApplication(sys.argv)
     okno = Application()
     sys.exit(app.exec_())
