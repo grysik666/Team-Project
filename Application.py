@@ -1,9 +1,6 @@
-from PyQt5.QtWidgets import QApplication, QMessageBox, QWidget, QScrollArea
-from PyQt5.QtWidgets import QGridLayout, QLabel, QInputDialog
-from PyQt5.QtWidgets import QPushButton, QVBoxLayout, QFileDialog
-import Algorithm
-import Graph
-import random
+from PyQt5.QtWidgets import QApplication, QMessageBox, QWidget, QScrollArea, QPushButton, QVBoxLayout
+from PyQt5.QtWidgets import QGridLayout, QLabel, QInputDialog, QFileDialog
+import sys, Algorithm, Graph, random
 
 class ScrollMessageBox(QMessageBox):
    def __init__(self, *args, **kwargs):
@@ -56,12 +53,14 @@ class Application(QWidget):
     def open_file(self):
         path, _ = QFileDialog.getOpenFileName(self, "Otwórz plik", "", "Wszystkie pliki (*);; Plik tekstowy (*.txt)")
         Centre, Capacity, House = Algorithm.load_from_file(path)
+        if len(Centre) != len(Capacity) or sum(Capacity) != len(House):
+            exit()
         G = Algorithm.Hungarian_Algorithm(Centre, Capacity, House)
         M, Result, StringResult = G.main_algorithm(True)
         StrResult = 'Łączna odległość pomiędzy połączonymi centrami i domami wynosi ' + str(round(Result, 3)) + ' km'
         Box = ScrollMessageBox(1, "Wynik", StrResult + '\n' + StringResult, QMessageBox.Save | QMessageBox.Ok)
-        ret = Box.exec_()
-        if ret == QMessageBox.Save:
+        Return = Box.exec_()
+        if Return == QMessageBox.Save:
             with open('Results.txt', 'w') as f:
                 f.write(StrResult + '\n' + StringResult)
         G = Graph.Graphs()
@@ -80,8 +79,8 @@ class Application(QWidget):
         M, Result, StringResult = G.main_algorithm(True)
         StrResult = 'Łączna odległość pomiędzy połączonymi centrami i domami wynosi ' + str(round(Result, 3)) + ' km'
         Box = ScrollMessageBox(1, "Wynik", StrResult + '\n' + StringResult, QMessageBox.Save | QMessageBox.Ok)
-        ret = Box.exec_()
-        if ret == QMessageBox.Save:
+        Return = Box.exec_()
+        if Return == QMessageBox.Save:
             with open('Results.txt', 'w') as f:
                 f.write(StrResult + '\n' + StringResult)
         G = Graph.Graphs()
@@ -101,19 +100,22 @@ class Application(QWidget):
         centre = []
         capacity = []
         house = []
+        
         for j in range(0, len(Centre) - 1, 2):
             centre.append([Centre[j], Centre[j + 1]])
         for j in range(len(Capacity)):
             capacity.append(Capacity[j])
         for j in range(0, len(House) - 1, 2):
             house.append([House[j], House[j + 1]])
-
+            
+        if len(Centre) != len(Capacity) or sum(Capacity) != len(House):
+            exit()
         G = Algorithm.Hungarian_Algorithm(centre, capacity, house)
         M, Result, StringResult = G.main_algorithm(True)
         StrResult = 'Łączna odległość pomiędzy połączonymi centrami i domami wynosi ' + str(round(Result, 3)) + ' km'
         Box = ScrollMessageBox(1, "Wynik", StrResult + '\n' + StringResult, QMessageBox.Save | QMessageBox.Ok)
-        ret = Box.exec_()
-        if ret == QMessageBox.Save:
+        Return = Box.exec_()
+        if Return == QMessageBox.Save:
             with open('Results.txt', 'w') as f:
                 f.write(StrResult + '\n' + StringResult)
         G = Graph.Graphs()
