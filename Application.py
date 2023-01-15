@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QApplication, QMessageBox, QWidget, QScrollArea
-from PyQt5.QtWidgets import QGridLayout, QLabel
+from PyQt5.QtWidgets import QGridLayout, QLabel, QInputDialog
 from PyQt5.QtWidgets import QPushButton, QVBoxLayout, QFileDialog
 import Algorithm
 import Graph
@@ -59,7 +59,11 @@ class Application(QWidget):
         G = Algorithm.Hungarian_Algorithm(Centre, Capacity, House)
         M, Result, StringResult = G.main_algorithm(True)
         StrResult = 'Łączna odległość pomiędzy połączonymi centrami i domami wynosi ' + str(round(Result, 3)) + ' km'
-        ScrollMessageBox(1 , "Wynik", StrResult + '\n' + StringResult)
+        Box = ScrollMessageBox(1, "Wynik", StrResult + '\n' + StringResult, QMessageBox.Save | QMessageBox.Ok)
+        ret = Box.exec_()
+        if ret == QMessageBox.Save:
+            with open('Results.txt', 'w') as f:
+                f.write(StrResult + '\n' + StringResult)
         G = Graph.Graphs()
         G.plot_graph(Centre, Capacity, House, M)
         
@@ -67,7 +71,6 @@ class Application(QWidget):
         Centre = []
         Capacity = []
         House = []
-        label = '*'*50
         for _ in range(5):
             Centre.append([random.random()*4 + 49.8, random.random()*8.5 + 14.8])
             Capacity.append(random.randint(10,25))
@@ -76,7 +79,11 @@ class Application(QWidget):
         G = Algorithm.Hungarian_Algorithm(Centre, Capacity, House)
         M, Result, StringResult = G.main_algorithm(True)
         StrResult = 'Łączna odległość pomiędzy połączonymi centrami i domami wynosi ' + str(round(Result, 3)) + ' km'
-        ScrollMessageBox(1 , "Wynik", StrResult + '\n' + StringResult)
+        Box = ScrollMessageBox(1, "Wynik", StrResult + '\n' + StringResult, QMessageBox.Save | QMessageBox.Ok)
+        ret = Box.exec_()
+        if ret == QMessageBox.Save:
+            with open('Results.txt', 'w') as f:
+                f.write(StrResult + '\n' + StringResult)
         G = Graph.Graphs()
         G.plot_graph(Centre, Capacity, House, M)
 
