@@ -16,7 +16,6 @@ class ScrollMessageBox(QMessageBox):
       scrll.setWidgetResizable(True)
       grd.addWidget(scrll,0,1)
       chldn[1].setText('')
-      self.exec_()
       
 class Application(QWidget):
     def __init__(self, parent=None):
