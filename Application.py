@@ -60,7 +60,7 @@ class Application(QWidget):
         Box = ScrollMessageBox(1, "Wynik", StrResult + '\n' + StringResult, QMessageBox.Save | QMessageBox.Ok)
         Return = Box.exec_()
         if Return == QMessageBox.Save:
-            with open('Results.txt', 'w') as f:
+            with open('Results1.txt', 'w') as f:
                 f.write(StrResult + '\n' + StringResult)
         G = Graph.Graphs()
         G.plot_graph(Centre, Capacity, House, M)
@@ -80,7 +80,7 @@ class Application(QWidget):
         Box = ScrollMessageBox(1, "Wynik", StrResult + '\n' + StringResult, QMessageBox.Save | QMessageBox.Ok)
         Return = Box.exec_()
         if Return == QMessageBox.Save:
-            with open('Results.txt', 'w') as f:
+            with open('Results2.txt', 'w') as f:
                 f.write(StrResult + '\n' + StringResult)
         G = Graph.Graphs()
         G.plot_graph(Centre, Capacity, House, M)
@@ -115,7 +115,7 @@ class Application(QWidget):
         Box = ScrollMessageBox(1, "Wynik", StrResult + '\n' + StringResult, QMessageBox.Save | QMessageBox.Ok)
         Return = Box.exec_()
         if Return == QMessageBox.Save:
-            with open('Results.txt', 'w') as f:
+            with open('Results3.txt', 'w') as f:
                 f.write(StrResult + '\n' + StringResult)
         G = Graph.Graphs()
         G.plot_graph(centre, capacity, house, M)
