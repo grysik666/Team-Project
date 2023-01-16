@@ -44,11 +44,11 @@ class Hungarian_Algorithm:
                 raise Exception(text + 'house.')
             
         if int(sum(capacity)) != len(house):
-            raise Exception('No. of houses doesn\'t match the capacity.')
+            raise Exception("No. of houses doesn't match the capacity.")
         if len(capacity) != len(centre):
-            raise Exception('No. of centres doesn\'t match the capacity.')
+            raise Exception("No. of centres doesn't match the capacity.")
 
-    def distance(self, centre: list, house: list):
+    def distance(self, Centre: list, House: list):
         """[Function which calculates distance from distribution centre to house.]
 
         Args:
@@ -58,7 +58,7 @@ class Hungarian_Algorithm:
         Returns:
             [float]: [Distance from distribution centre to house.]
         """
-        return math.sqrt((centre[0] - house[0]) ** 2 + (centre[1] - house[1]) ** 2)
+        return round(math.sqrt((Centre[0] - House[0]) ** 2 + (math.cos((House[0] * math.pi) / 180) * (Centre[1] - House[1])) ** 2) * (40075.704 / 360), 3)
 
     def calculate_adjency_matrix(self):
         """[Function which makes matrix of distances from every distribution centre to every house.]
@@ -139,14 +139,14 @@ class Hungarian_Algorithm:
         for i in range(len(path) - 1):
             temp = G_y[path[i]][path[i + 1]]
             G_y[path[i]][path[i + 1]] = 0
-            G_y[path[i + 1]][path[i]] = temp
+            G_y[path[i + 1]][path[i]] = round(temp, 3)
         return G_y
 
     def update_M(self, M, G_y):
-        """[summary]
+        """[Function adds edges from graph G_y to perfect matching M]
 
         Returns:
-            [type]: [description]
+            [list]: [List of pairs - first coordinate centre number, second coordinate house number]
         """
         M = []
         NoOfHouses = int(len(self.house))
@@ -158,10 +158,10 @@ class Hungarian_Algorithm:
         return M
     
     def update_Z(self, Z, G_y, R_C, R_H):
-        """[summary]
+        """[Function updates set Z at vertices from updated graph G_y which are joined with graph R_C]
 
         Returns:
-            [type]: [description]
+            [list]: [List of vertices]
         """
         Z = R_C.copy()
         for vertex in R_C:
@@ -172,21 +172,21 @@ class Hungarian_Algorithm:
         return Z
     
     def update_Gy(self, G, y, G_y):
-        """[summary]
+        """[Function updates graph G_y at tight edges]
 
         Returns:
-            [type]: [description]
+            [matrix]: [Matrix distances between two vertices]
         """
         Centre_Capacity_iterator = list(range(len(self.house))) #centra razy pojemnosc
         House_iterator = list(range(len(self.house)))
         NoOfHouses = int(len(self.house))
         for i in Centre_Capacity_iterator:
             for j in House_iterator:
-                if y[i]+y[j + NoOfHouses] == G[i][j + NoOfHouses]:
-                    if G_y[i][j + NoOfHouses] != G[i][j + NoOfHouses] and G_y[j + NoOfHouses][i] != G[i][j + NoOfHouses]:
-                        G_y[i][j + NoOfHouses] = G[i][j + NoOfHouses]
+                if round(y[i]+y[j + NoOfHouses], 3) == round(G[i][j + NoOfHouses], 3):
+                    if round(G_y[i][j + NoOfHouses], 3) != round(G[i][j + NoOfHouses], 3) and round(G_y[j + NoOfHouses][i], 3) != round(G[i][j + NoOfHouses], 3):
+                        G_y[i][j + NoOfHouses] = round(G[i][j + NoOfHouses], 3)
                 else:
-                    if G_y[i][j + NoOfHouses] == G[i][j + NoOfHouses] or G_y[j + NoOfHouses][i] == G[i][j + NoOfHouses]:
+                    if round(G_y[i][j + NoOfHouses], 3) == round(G[i][j + NoOfHouses], 3) or round(G_y[j + NoOfHouses][i], 3) == round(G[i][j + NoOfHouses], 3):
                         G_y[i][j + NoOfHouses] = 0
                         G_y[j + NoOfHouses][i] = 0    
         return G_y    
@@ -205,20 +205,25 @@ class Hungarian_Algorithm:
             for j in H_minus_Z:
                 if (G[i][j] - Y[i] - Y[j]) < delta:
                     delta = G[i][j] - Y[i] - Y[j]
-        return delta
+        return round(delta, 3)
     
     def print_info(self, M):
+        StringResult =''
         Centre_Indexes = []
         Temporary_List = [[] for _ in range(len(self.centre))]
         NoOfHouses = int(len(self.house))
+        ResultsPerCentre = self.calculate_result_per_centre(M)
         for i in range(len(self.centre)):
             for _ in range(int(self.capacity[i])):
                 Centre_Indexes.append(i)
         for i in range(len(M)):
             Temporary_List[Centre_Indexes[M[i][0]]].append(M[i][1] - NoOfHouses + 1)
         print('Centre ---> House')
+        StringResult += 'Centrum ---> Dom (Dystans do pokonania)\n'
         for i in range(len(Temporary_List)):
             print('  ', i+1, '  --->', *Temporary_List[i])
+            StringResult += '  ' + str(i+1) + '  --->' + str(Temporary_List[i]) + ' (' + str(ResultsPerCentre[i]) + ' km) ' + '\n'
+        return StringResult
             
     def calculate_result(self, M):
         Result = 0
@@ -231,6 +236,19 @@ class Hungarian_Algorithm:
 
             Result += self.distance(self.centre[Centre_Indexes[int(M[i][0])]], self.house[int(M[i][1]) - NoOfHouses])
         return Result
+    
+    def calculate_result_per_centre(self, M):
+        Centre_Indexes = []
+        NoOfHouses = int(len(self.house))
+        for i in range(len(self.centre)):
+            for _ in range(int(self.capacity[i])):
+                Centre_Indexes.append(i)
+        Result = [0. for _ in range(len(Centre_Indexes))]
+        for i in range(len(M)):
+            Result[Centre_Indexes[int(M[i][0])]] += round(self.distance(self.centre[Centre_Indexes[int(M[i][0])]], self.house[int(M[i][1]) - NoOfHouses]), 3)
+        for i in range(len(Result)):
+            Result[i] = round(Result[i], 3)
+        return Result
         
     def main_algorithm(self, print_info = False):
         """[Main Hungarian algorithm]
@@ -239,9 +257,9 @@ class Hungarian_Algorithm:
             [list]: [Perfect matching in graph containing distribution centres and houses.]
         """
         M = []
+        StringResult = ''
         G = self.generate_bipartite_graph()
         NoOfHouses = int(len(self.house))
-        NoOfCentres = int(len(self.centre))
         Y = self.init_potential()
         G_y = np.zeros(((2 * NoOfHouses), (2 * NoOfHouses)))
         G_y = self.update_Gy(G, Y, G_y)
@@ -270,9 +288,9 @@ class Hungarian_Algorithm:
             R_H = self.update_R(R_H, M, False)
             Z = self.update_Z(Z, G_y, R_C, R_H)
         if print_info:
-            self.print_info(M)
+            StringResult = self.print_info(M)
         Result = self.calculate_result(M)
-        return M, Result
+        return M, Result, StringResult
                 
                 
 def intersection(list1, list2):
