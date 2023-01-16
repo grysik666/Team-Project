@@ -218,10 +218,8 @@ class Hungarian_Algorithm:
                 Centre_Indexes.append(i)
         for i in range(len(M)):
             Temporary_List[Centre_Indexes[M[i][0]]].append(M[i][1] - NoOfHouses + 1)
-        print('Centre ---> House')
         StringResult += 'Centrum ---> Dom (Dystans do pokonania)\n'
         for i in range(len(Temporary_List)):
-            print('  ', i+1, '  --->', *Temporary_List[i])
             StringResult += '  ' + str(i+1) + '  --->' + str(Temporary_List[i]) + ' (' + str(ResultsPerCentre[i]) + ' km) ' + '\n'
         return StringResult
             
