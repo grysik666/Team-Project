@@ -86,11 +86,11 @@ class Application(QWidget):
         G.plot_graph(Centre, Capacity, House, M)
 
     def values_generated_by_user(self):
-        Centre, done1 = QInputDialog.getText(
+        Centre, _ = QInputDialog.getText(
             self, 'Współrzędne centrów', 'Podaj współrzędne centrów')
-        Capacity, done2 = QInputDialog.getText(
+        Capacity, _ = QInputDialog.getText(
             self, 'Limity centrów', 'Podaj limity centrów')
-        House, done3 = QInputDialog.getText(
+        House, _ = QInputDialog.getText(
             self, 'Współrzędne domów', 'Podaj współrzędne domów')
 
         Centre = [float(i) for i in Centre.split(' ')]
